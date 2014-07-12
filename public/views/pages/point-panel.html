@@ -1,0 +1,464 @@
+<style type="text/css">
+.digital {
+	padding:20px;
+	font-size:82px;
+	font-family:'digital';
+	text-align:center;
+	font-weight:bold;
+	color:red;
+	border:1px solid #555;
+}
+</style>
+<div class="page bg-facebook" data-ng-controller="PointPanelCtrl">
+	<div class="row">
+		<div class="col-md-12">
+			<section class="panel panel-box">
+				<!-- timer and scores -->
+				<div class="panel-top bg-primary">
+					<div class="pull-{{sideA?'right':'left'}}">
+						<p>{{game.teams[0].score}}</p>
+						<p>{{game.teams[0].team_name}}</p>
+					</div>
+					<div class="pull-{{sideA?'left':'right'}}">
+						<p>{{game.teams[1].score}}</p>
+						<p>{{game.teams[1].team_name}}</p>
+					</div>
+					<div class="divider divider-lg"></div>
+				</div>             
+				<div class="panel-icon  bg-{{timerRunning?'primary':'danger'}}" ng-click="startStopTimer()" ng-disabled="!game.period">
+					<timer autostart="false" interval="1000" countdown="600" finish-callback="saveGame()">
+						<h2>{{mminutes}}:{{sseconds}} <br>{{game.period?'Q'+game.period:''}}</h2>
+					</timer>
+				</div>
+				<!-- end of timer and scores -->
+				<div class="panel-bottom bg-reverse">
+					<!-- actions panel -->
+					<div class="pull-{{sideA?'right':'left'}} col-md-2">
+						<div>
+							<button class="btn btn-block btn-warning" ng-click="team_select(0)" ng-disabled="!btn.team_select.light.enabled">{{game.teams[0].team_name}}</button><br>
+						</div>
+						<div ng-repeat="player in players_on_court[0]">
+							<button class="btn btn-block {{selected_player._id==player._id?'btn-success':'btn-primary'}}" ng-click="player_select(0,player)" ng-disabled="!btn.player_select.light.enabled">{{player.no}} {{player.last_name}}</button>
+							<br>
+						</div>
+						<div show="true">
+							<table class="table table-hover table-bordered">
+								<tr>
+									<th>NO</th>
+									<th>NAME</th>
+									<th>IN/OUT</th>
+								</tr>
+								<tr class="" ng-repeat="player in game.boxscore[0].players|orderBy:'oncourt':true">
+									<td ng-click="get_player_box(0,player)">{{player.no}}}}</td>
+									<td>{{player.last_name +' '+player.first_name}}</td>
+									<td>
+										<button ng-show="!player.oncourt" class="btn btn-facebook" ng-click="sub_in(true,player,0)">IN</button>
+										<button ng-show="player.oncourt" class="btn btn-danger" ng-click="sub_in(false,player,0)">OUT</button>
+									</td>
+								</tr>
+							</table>
+						</div>	
+						<div>
+							<table class="table table-hover table-bordered">
+								<tr>
+									<th colspan="2">{{player_box[0].last_name+' '+player_box[0].first_name}}</th>
+									<th></th>
+									<th colspan="2">TEAM</th>
+								</tr>
+								<tr>
+									<th>QTR</th>
+									<th>TOT</th>
+									<th></th>
+									<th>QTR</th>
+									<th>TOT</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].pts}}</th>
+									<th>PTS</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].pts}}</th>
+									<th>{{game.boxscore[0].team.pts}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].fg3.md}}/{{player_box[0].fg3.att}}</th>
+									<th>3FG(M/A)</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].fg3.md}}/{{game.boxscore[0].team.period[game.period-1].fg3.att}}</th>
+									<th>{{game.boxscore[0].team.fg3.md}}/{{game.boxscore[0].team.fg3.att}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].fg2.md}}/{{player_box[0].fg2.att}}</th>
+									<th>2FG(M/A)</th>                                    
+									<th>{{game.boxscore[0].team.period[game.period-1].fg2.att}}</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].fg2.md}}/{{game.boxscore[0].team.period[game.period-1].fg2.att}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].ft.md}}/{{player_box[0].ft.att}}</th>
+									<th>FT(M/A)</th>                                  
+									<th>{{game.boxscore[0].team.period[game.period-1].ft.md}}/{{game.boxscore[0].team.period[game.period-1].ft.att}}</th>
+									<th>{{game.boxscore[0].team.ft.md}}/{{game.boxscore[0].team.ft.att}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].reb.def}}/{{player_box[0].reb.off}}</th>
+									<th>REB(D/O)</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].reb.def}}/{{game.boxscore[0].team.period[game.period-1].reb.off}}</th>
+									<th>{{game.boxscore[0].team.reb.def}}/{{game.boxscore[0].team.reb.off}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].ass}}</th>
+									<th>AST</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].ass}}</th>
+									<th>{{game.boxscore[0].stl}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].stl}}</th>
+									<th>STL</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].stl}}</th>
+									<th>{{game.boxscore[0].stl}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].blk.bl}}</th>
+									<th>BLK</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].blk.bl}}</th>
+									<th>{{game.boxscore[0].blk.bl}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].tov.tot}}</th>
+									<th>TO</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].tov}}</th>
+									<th>{{game.boxscore[0].team.tov}}</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[0].fou.tot}}</th>
+									<th>FOUL</th>
+									<th>{{game.boxscore[0].team.period[game.period-1].fou.tot}}</th>
+									<th>{{game.boxscore[0].fou.tot}}</th>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="pull-{{sideA?'left':'right'}}  col-md-2">
+						<div>
+							<button class="btn btn-block btn-warning" ng-click="team_select(1)" ng-disabled="!btn.team_select.dark.enabled">{{game.teams[1].team_name}}</button><br>
+						</div>
+					
+						<div ng-repeat="player in players_on_court[1]">
+							<button class="btn btn-block  {{selected_player._id==player._id?'btn-success':'btn-primary'}}" ng-click="player_select(1,player)" ng-disabled="!btn.player_select.dark.enabled">{{player.no}} {{player.last_name}}</button>
+							<br>
+						</div>
+						<div>
+							<table class="table table-hover table-bordered">
+								<tr>
+									<th>NO</th>
+									<th>NAME</th>
+									<th>IN/OUT</th>
+								</tr>
+								<tr class="" ng-repeat="player in game.boxscore[1].players|orderBy:'oncourt':true">
+									<td ng-click="get_player_box(1,player)">{{player.no}}</td>
+									<td>{{player.last_name +' '+player.first_name}}</td>
+									<td>
+										<button ng-show="!player.oncourt" class="btn btn-facebook" ng-click="sub_in(true,player,1)">IN</button>
+										<button ng-show="player.oncourt" class="btn btn-danger" ng-click="sub_in(false,player,1)">OUT</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div show="true">
+							<table class="table table-hover table-bordered">
+								<tr>
+									<th colspan="2">{{player_box[1].last_name+' '+player_box[1].first_name}}</th>
+									<th></th>
+									<th colspan="2">TEAM</th>
+								</tr>
+								<tr>
+									<th>QTR</th>
+									<th>TOT</th>
+									<th></th>
+									<th>QTR</th>
+									<th>TOT</th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].pts}}</th>
+									<th>PTS</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].fg3.md}}/{{player_box[1].fg3.att}}</th>
+									<th>3FG(M/A)</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].fg2.md}}/{{player_box[1].fg2.att}}</th>
+									<th>2FG(M/A)</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].ft.md}}/{{player_box[1].ft.att}}</th>
+									<th>FT(M/A)</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].reb.def}}/{{player_box[1].reb.off}}</th>
+									<th>REB(D/O)</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].ass}}</th>
+									<th>AST</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].stl}}</th>
+									<th>STL</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].blk.bl}}</th>
+									<th>BLK</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].tov.tot}}</th>
+									<th>TO</th>
+									<th></th>
+									<th></th>
+								</tr>
+								<tr>
+									<th></th>
+									<th>{{player_box[1].fou.tot}}</th>
+									<th>FOUL</th>
+									<th></th>
+									<th></th>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class=" col-md-8">
+						<dl class="dl-horizontal" ng-show="showSettings">
+	 						<span class="ui-select" ng-show="!game._id">
+	 							Select Game
+        						<select ng-options="game as 'Game No:'+game.no+' '+game.teams[0].team_name+' vs '+game.teams[1].team_name for game in games" ng-model="selected_game"></select> 
+        						<button class="btn btn-facebook " type="button" ng-click="set_game()">Go</button>      
+     						</span>
+							<span ng-show="game._id">								
+								<button class="btn {{game.period==1?'btn-facebook':''}}" type="button" ng-click="set_period(1)">1Q</button>	
+								<button class="btn {{game.period==2?'btn-facebook':''}}" type="button" ng-click="set_period(2)">2Q</button>
+								<button class="btn {{game.period==3?'btn-facebook':''}}" type="button" ng-click="set_period(3)">3Q</button>
+								<button class="btn {{game.period==4?'btn-facebook':''}}" type="button" ng-click="set_period(4)">4Q</button>
+								<button class="btn {{game.period==5?'btn-facebook':''}}" type="button" ng-click="set_period(5)">OT</button>			
+								<button class="btn btn-info " type="button" ng-click="sideA=!sideA">Switch Team Side</button>
+							</span>
+						</dl>						
+						<dl class="dl-horizontal" ng-show="!field_goal.shot_type">
+							<button class="btn btn-success" ng-click="fast_break(0)" type="button">FB0</button>
+							<button class="btn btn-success" ng-click="fast_break(1)" type="button">FB1</button>
+							<button class="btn btn-success" ng-click="fast_break(2)" type="button">FB2</button>
+							<button class="btn btn-success" ng-click="fast_break(3)" type="button">FB3</button>
+							<button class="btn btn-success" ng-click="fast_break(4)" type="button">FB4</button>	
+							<button class="btn btn-danger " ng-click="second_chance_pts()" type="button">2ND C-PTS</button>
+							<button class="btn btn-danger {{current_action=='steal'?'btn-success':''}}" ng-click="steal()" type="button">Steal</button>
+							<button class="btn btn-danger " ng-click="tov_points()">TO PTS</button>
+							<button class="btn btn-danger " ng-click="turn_over()">TO</button>
+							<button class="btn btn-danger " ng-click="team_rebound(true)">TEAM OFFREB</button>
+							<button class="btn btn-danger " ng-click="team_rebound(false)">TEAM DREB</button>
+							<button class="btn btn-danger " ng-click="foul()">FOUL</button>
+							<button class="btn btn-danger " ng-click="foul_on()">FOUL ON</button>
+							<button class="btn btn-danger " type="button" ng-click="free_throw(true)" ng-disabled=" ">FT-Made</button>
+							<button class="btn btn-danger " type="button" ng-click="free_throw(false)" ng-disabled=" ">FT-Missed</button>							
+							<button class="btn btn-info " type="button" ng-click="showSettings=!showSettings">Settings</button>
+						</dl>
+						<dl class="dl-horizontal" ng-show="btn.foul_type.enabled">
+							<button class="btn span6 " type="button" ng-click="saveFoul(true,false,false)" ng-disabled="!btn.foul_type.enabled">Offensive</button>
+							<button class="btn span6 " type="button" ng-click="saveFoul(false,true,false)" ng-disabled="!btn.foul_type.enabled">Deffensive W/ A</button>
+							<button class="btn span6 " type="button" ng-click="saveFoul(false,false,false)" ng-disabled="!btn.foul_type.enabled">Deffensive W/O A</button>
+							<button class="btn span6 " type="button" ng-click="saveFoul(false,true,true)" ng-disabled="!btn.foul_type.enabled">Tech/Unsportsman W/A</button>
+							<button class="btn span6 " type="button" ng-click="saveFoul(false,false,true)" ng-disabled="!btn.foul_type.enabled">Tech/Unsportsman W/O</button>
+						</dl>	
+						<dl class="dl-horizontal" ng-show="field_goal.shot_type">
+							<button class="btn btn-danger " type="button" ng-click="save_field_goal(true,true,false)" ng-disabled="!field_goal.shot_type">Made Contested</button>
+							<button class="btn btn-danger " type="button" ng-click="save_field_goal(true,false,false)" ng-disabled="!field_goal.shot_type">Made Un-contested</button>
+							<button class="btn btn-{{field_goal.from_assist?'primary':'inverse'}} " type="button" ng-click="field_goal.from_assist =!field_goal.from_assist" ng-disabled="!field_goal.shot_type">w/ Assist</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,true,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Contested</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,true,true)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Blocked</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,false,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Un-contested</button>
+						</dl>
+						<dl class="dl-horizontal">
+							<div ng-show="current_action != 'turn_over'">	
+							<span ng-repeat="shot_type in shot_types">
+								<button class="btn btn-{{field_goal.shot_type.id==shot_type.id?'primary':'danger'}} "  type="button" ng-click="field_goal.shot_type=shot_type" ng-disabled="!btn.fg_shot_type.enabled || (shot_type.id=='D' && field_goal.value==3)||(shot_type.id=='L' && field_goal.value==3)">{{shot_type.name}}
+								</button>
+							</span>
+							<button class="btn" ng-click="adjustClock(5)">+1sec</button>
+							<button class="btn" ng-click="adjustClock(-5)">-1sec</button>
+							</div>
+							<div ng-show="current_action == 'turn_over'">
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('travelling')" ng-disabled="!btn.to_type.enabled">Travelling</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('ball_handling')" ng-disabled="!btn.to_type.enabled">Ball Handling</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('dribbling')" ng-disabled="!btn.to_type.enabled">Dribbling</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('receiving')" ng-disabled="!btn.to_type.enabled">Receiving</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('passing')" ng-disabled="!btn.to_type.enabled">Passing</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('three_sec')" ng-disabled="!btn.to_type.enabled">3 secs</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('five_sec')" ng-disabled="!btn.to_type.enabled">5 secs</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('eight_sec')" ng-disabled="!btn.to_type.enabled">8 secs</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('shot_clock')" ng-disabled="!btn.to_type.enabled">24 secs</button>
+							</div>
+
+						</dl>	<span ng-show="current_action">. SELECT PLAYER/TEAM FOR {{current_action?current_action:''}} {{field_goal.value?'('+field_goal.value+'pts)':''}} </span>&nbsp;
+				
+						<div class="court" style="margin:auto;width:678px;margin-top:10px">
+							<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="678.62207" height="371.02435" id="svg3058" version="1.1" inkscape:version="0.48.4 r9939" sodipodi:docname="drawing.svg" ng-click="setShotLocation($event)">
+								<defs id="defs3060">
+									<clipPath clipPathUnits="userSpaceOnUse" id="clipPath4673"></clipPath>
+								</defs>
+								<g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(-41.244156,-38.442087)">
+									<image y="41.144035" x="-429.57239" id="image3074" xlink:href="images/courtDraw.png" height="500.00101" width="500.14136" transform="matrix(-0.00254076,-1.33,1.35,0.00254076,-10,-15)" style="fill:#55ddff"></image>
+									<!--<img src="/uaapstat/images/courtDraw.png">-->
+									<!--===============================LEFT SIDE===============================-->
+									<!--Left 13 -->
+									<path ng-click="shot_attempt(2,'C1',false)" style="opacity:0;fill:#782121" d="m 89.65625,110.40625 c -11.55412,0 -27.67042,3.26338 -38.26042,6.06414 l 0.3284,58.88158 C 62.09082,168.02816 72.60119,164.25 86.34375,164.25 c 20.90599,0 40.43024,9.29002 51.92489,24.66776 l 51.26371,-17.89144 c -20.77359,-34.81353 -54.07328,-60.62007 -99.8761,-60.62007 z" id="path4257" inkscape:connector-curvature="0" sodipodi:nodetypes="sccsccs"></path>
+									<!--Left 12 -->
+									<path ng-click="shot_attempt(2,'C2',false)" style="opacity:0;fill:#782121" d="m 189.75603,170.87939 -51.48355,17.76644 c 6.70719,9.85684 11.00877,22.73172 11.00877,35.47917 0,13.29294 -4.47767,26.13708 -11.7193,36.23575 l 52.96875,17.37554 c 8.69384,-15.60454 13.81305,-34.09928 13.81305,-52.89254 0,-18.98424 -5.72801,-38.2449 -14.58772,-53.96436 z" id="path4255" inkscape:connector-curvature="0" sodipodi:nodetypes="ccsccsc"></path>
+									<!--Left 11-->
+									<path ng-click="shot_attempt(2,'C3',false)" style="opacity:0;fill:#782121" d="m 137.48794,260.66831 c -11.55273,14.64354 -31.04751,25.51919 -51.36294,25.51919 -13.74256,0 -24.25512,-6.62959 -34.62171,-13.9534 l 0.22149,61.8602 c 10.58999,2.80076 19.3461,4.0932 30.90022,4.0932 46.02588,0 86.86149,-25.75574 107.54879,-60.84868 z" id="path4077" inkscape:connector-curvature="0" sodipodi:nodetypes="csccscc"></path>
+									<!--Left 14-->
+									<path ng-click="shot_attempt(2,'ATR',false)" style="opacity:0;fill:#00aa88" d="m 86.1321,163.12737 c -14.02825,0 -23.90976,4.81442 -34.36733,12.39145 l -0.10965,97.04331 c 10.45757,7.57703 22.09347,13.37829 36.12171,13.37829 34.70986,0 61.52797,-28.41397 61.52797,-62.26809 0,-33.85412 -28.46284,-60.54496 -63.1727,-60.54496 z" id="path4086-8" inkscape:connector-curvature="0" sodipodi:nodetypes="sccsss"></path>
+									<!--Left 10-->
+									<path ng-click="shot_attempt(2,'B1',false)" style="opacity:0;fill:#5500d4" d="M 51.59257,71.007096 51.4375,115.25 c 10.75959,-2.61548 27.50141,-4.9375 38.40625,-4.9375 24.61984,0 45.94109,7.9047 63.2152,19.90034 l 40.67729,-49.629765 c -2.10431,-1.632151 -10.08143,-8.289428 -12.2567,-9.840695 z" id="path4475" inkscape:connector-curvature="0" sodipodi:nodetypes="ccscccc"></path>
+									<!--Left 9-->
+									<path ng-click="shot_attempt(2,'B2',false)" style="opacity:0;fill:#5500d4;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 193.21676,80.189257 -38.7635,50.034183 c 13.84359,10.13971 25.91049,24.2482 35.02652,39.52534 l -0.28125,0.0937 c 0.79737,0.41288 0.68681,0.36355 0.84375,1.40625 0.0101,-0.0132 0.0281,-0.0441 0.0313,-0.0313 0.0207,0.0894 0.0329,0.19915 0.0313,0.28125 0.0873,0.22119 0.20326,0.45808 0.34375,0.75 l 0.40625,-0.125 c 1.59259,2.82568 3.47625,6.93394 4.8136,9.89364 l 57.33168,-17.55866 c -11.72726,-32.73581 -32.381,-62.39977 -59.7834,-84.269403 z" id="path4527" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccccccccc"></path>
+									<!--Unknown-->
+									<path style="opacity:0.33744854;fill:#5500d4" d="m 190.10478,171.49878 c -0.004,-0.0105 -0.0275,-0.0215 -0.0313,-0.0313 0.0122,0.0685 0.0159,0.079 0.0313,0.15625 0.008,0.0397 -7.6e-4,-0.0888 0,-0.125 z" id="path4525" inkscape:connector-curvature="0"></path>
+									<!--Unknown-->
+									<path style="opacity:0.33744854;fill:#5500d4" d="m 190.07348,171.46748 c -0.0169,-0.0951 -0.0191,-0.13899 -0.0313,-0.21875 -0.0162,0.0212 -0.0367,0.0422 -0.0313,0.0625 0.007,0.0247 0.0473,0.11642 0.0625,0.15625 z" id="path4523" inkscape:connector-curvature="0"></path>
+									<!--Left 7-->
+									<path ng-click="shot_attempt(2,'B4',false)" style="opacity:0;fill:#5500d4" d="m 196.35588,266.16819 c -1.43365,3.30483 -3.46966,7.53294 -5.21985,10.67434 l -1.5,-0.5 0,1.40625 c -0.0962,0.3434 -0.13056,0.70801 -0.28125,1.03125 -0.0384,0.0823 -0.0795,0.14225 -0.125,0.21875 l 0.5625,0.1875 c -8.55296,14.50883 -20.64558,27.90543 -34.87555,37.66612 l 40.31799,49.8284 c 27.02209,-21.33763 46.60144,-52.40805 58.62938,-84.3125 z" id="path4519" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccccc"></path>
+									<!--Unknown-->
+									<path d="m 186.22978,277.31128 c -0.036,0.0313 -0.0803,0.0586 -0.0937,0.0937 -0.008,0.022 0.0572,0.008 0.0625,0.0313 0.0222,0.0956 0.0241,0.21462 0.0313,0.3125 l 0,-0.4375 z" id="path4473" inkscape:connector-curvature="0"></path>
+									<!--Left 8-->
+									<path ng-click="shot_attempt(2,'B3',false)" style="opacity:0;fill:#5500d4" d="m 252.9715,164.1557 -57.47314,18.15406 c 5.3962,12.81214 9.03289,27.84567 9.03289,42.44024 0,14.02556 -3.48776,28.65107 -8.48629,41.04989 l 57.30482,16.60746 c 6.7884,-18.89908 9.01206,-39.79063 9.01206,-60.8454 0,-20.02456 -3.22468,-39.30962 -9.39034,-57.40625 z" id="path4471" inkscape:connector-curvature="0" sodipodi:nodetypes="ccsccsc"></path>
+									<!--Left 6-->
+									<path ng-click="shot_attempt(2,'B5',false)" style="opacity:0;fill:#5500d4" d="m 154.75529,316.46589 c -19.76192,12.89634 -45.98002,21.62786 -71.94279,21.62786 -10.85588,0 -21.35996,-1.35939 -31.375,-3.84375 l 0.65789,43.33553 125.9556,-0.10965 3.50877,-0.37825 c 3.87719,-2.56641 9.89239,-7.82644 13.56031,-10.63925 z" id="path4264" inkscape:connector-curvature="0" sodipodi:nodetypes="cscccccc"></path>
+									<!--Left 1-->
+									<rect ng-click="shot_attempt(3,'A5',false)" style="opacity:0;fill:#333333" id="rect4268-6" width="129.80557" height="21.562143" x="51.474991" y="377.73648" ry="0.10964912"></rect>
+									<!--Left 5-->
+									<rect ng-click="shot_attempt(3,'A1',false)" style="opacity:0;fill:#333333" id="rect4268-9" width="129.14255" height="22.013098" x="51.474983" y="48.380043" ry="0"></rect>
+									<!--Left 4-->
+									<path ng-click="shot_attempt(3,'A2',false)" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 181.15008,48.659201 0.41199,21.493594 c 35.28914,25.647825 58.95462,57.847795 73.35595,100.231385 l 126.62188,-28.16364 0.0642,-94.956944 z" id="path4573" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccc"></path>
+									<!--Left 3-->
+									<path ng-click="shot_attempt(3,'A3',false)" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 381.44907,142.323 -125.97563,28.6904 c 4.57993,15.9184 6.79,34.10334 6.79,51.40977 0,18.74855 -1.39422,36.9112 -6.73877,54.00173 L 381.294,304.25154 z" id="path4571" inkscape:connector-curvature="0" sodipodi:nodetypes="ccsccc"></path>
+									<!--Left 2-->
+									<path ng-click="shot_attempt(3,'A4',false)" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 255.41777,276.91776 c -13.70692,41.00775 -37.8283,76.04266 -73.91832,99.9545 l 0.4386,22.70395 199.2807,0.76754 0,-95.65625 z" id="rect4537" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccc"></path>
+									<!--In Paint -->
+									<!--ATR in paint -->
+									<path ng-click="shot_attempt(2,'ATR',true)" style="opacity:0;fill:#d40000" d="m 84.193877,167.27666 c -4.06217,0.0579 -11.224826,-0.63658 -15.152116,0.40344 -4.07196,0.15781 -4.286255,-0.4277 -7.957025,1.64602 -3.23429,1.76441 -6.30649,3.81159 -9.30184,5.95241 -0.0417,32.35417 -0.0833,64.70833 -0.125,97.0625 6.13196,4.46723 12.78199,8.33058 20.00358,10.73859 5.600986,0.23542 11.60955,0.16078 16.69747,0.3104 6.436752,0.0383 16.763634,-0.0958 11.956254,-0.0136 5.19972,-0.96708 9.3232,-1.42467 14.09123,-3.70802 4.92042,-2.40665 9.54219,-5.43982 13.64512,-9.07433 2.88947,-2.51743 5.52208,-5.3264 7.89372,-8.33433 2.40565,-3.09307 4.54233,-6.39153 6.3421,-9.87327 1.59522,-3.0504 2.88692,-6.25729 3.9749,-9.52084 1.28839,-4.06589 2.22929,-8.24772 2.66078,-12.49462 0.6264,-5.70406 0.48868,-11.49581 -0.50917,-17.15033 -0.65468,-3.85521 -1.73059,-7.63195 -3.16854,-11.26768 -1.29478,-3.34432 -2.93662,-6.55667 -4.82188,-9.60582 -4.64305,-7.44967 -10.93913,-13.84121 -18.25137,-18.68798 -3.83166,-2.53126 -7.95793,-4.61519 -12.22948,-6.29534 -0.97107,-0.35702 2.43876,1.09261 1.48995,0.82108 -4.86885,-1.66188 -13.979809,-0.5422 -19.105019,-0.98004 -2.39522,-0.18323 -5.731124,-0.004 -8.133664,0.0718 z" id="path4086-8-2" inkscape:connector-curvature="0" sodipodi:nodetypes="ccccccccccccccccccccccc" />
+									<!--C2 in paint -->
+									<path ng-click="shot_attempt(2,'C2',true)" style="opacity:0;fill:#ff0000" d="m 183.89098,172.86134 -46.43969,15.79276 c 6.70719,9.85684 11.00877,22.73172 11.00877,35.47917 0,13.29295 -4.47767,26.13709 -11.7193,36.23576 l 47.55052,15.18256 c -0.94545,-18.91146 -0.62257,-28.64835 -0.66063,-50.04168 -0.0337,-18.94925 -0.0905,-32.98174 0.26033,-52.64857 z" id="path4255-1" inkscape:connector-curvature="0" sodipodi:nodetypes="ccsccsc" />
+									<!--C3 in paint -->
+									<path ng-click="shot_attempt(2,'C3',true)" id="path3166" d="m 167.62574,282.78157 c -23.13656,1.1398 -51.10119,0.42285 -51.10119,0.42285 l -1.58842,-0.24937 c -1.2899,0 -11.44086,0.34722 -13.36916,0.35702 l 4.20468,-0.97842 c 7.88542,-1.30002 19.01318,-9.03958 25.7652,-15.17753 4.00924,-3.64461 6.14831,-6.73765 6.522,-6.87614 l 45.8125,15.46875 c -0.40722,3.48787 0.0951,7.48767 -1.25219,7.56634 -3.8304,0.22367 -9.32802,0.11001 -16.74781,0.12445 z M 67.671239,281.8035 c -0.186159,-0.066 -3.337734,-0.11952 -3.523026,-0.1875 0.170956,2.2e-4 -2.625493,-1.80936 -1.24671,-2.08331 z m 3.110746,1.12829 c -5.888497,-0.008 -16.24531,0.44032 -18.997807,0.33717 l -0.123355,-10.79714 c 4.670722,3.29978 13.780643,8.1824 19.121162,10.45997 z" style="opacity:0;fill:#ff0000" inkscape:connector-curvature="0" sodipodi:nodetypes="cccccsccscccccccccc" />
+									<!--C1 in paint -->
+									<path ng-click="shot_attempt(2,'C1',true)" style="opacity:0;fill:#ff0000" d="m 165.87135,166.64165 c -22.25936,-0.0433 -53.84375,0.625 -53.84375,0.625 l 2.625,0.15625 c -1.28989,0 -3.9467,-0.0215 -5.875,-0.0313 l 0,0.1875 c 11.80665,4.0774 22.11045,11.31303 29.28125,20.90625 l 45.8125,-15.46875 c -0.40722,-3.48787 0.97232,-5.95258 -0.375,-6.03125 -3.8304,-0.22367 -10.20521,-0.32931 -17.625,-0.34375 z m -99.406251,0.375 c -0.186159,0.066 -0.377208,0.11951 -0.5625,0.1875 0.170956,-2.2e-4 0.389858,1.6e-4 0.5625,0 l 0,-0.1875 z m -0.5625,0.1875 c -5.888497,0.008 -10.872503,0.0531 -13.625,0.15625 l -0.78125,7.5625 c 4.670722,-3.29978 9.394679,-5.87977 14.40625,-7.71875 z" id="path3154" inkscape:connector-curvature="0" />
+									<!--===============================E ND OF LEFT SIDE===============================-->
+									<!--===============================RIGHT SIDE===============================-->
+									<!--Right 11-->
+									<path ng-click="shot_attempt(2,'C3',false)" sodipodi:nodetypes="sccsccs" inkscape:connector-curvature="0" id="path4575" d="m 674.68409,110.81855 c 11.55412,0 27.67042,3.26338 38.26042,6.06414 l -0.3284,58.88158 c -10.36659,-7.32381 -20.87696,-11.10197 -34.61952,-11.10197 -20.90599,0 -40.43024,9.29002 -51.92489,24.66776 l -51.26371,-17.89144 c 20.77359,-34.81353 54.07328,-60.62007 99.8761,-60.62007 z" style="opacity:0;fill:#782121"></path>
+									<!--Right 13-->
+									<path ng-click="shot_attempt(2,'C1',false)" sodipodi:nodetypes="csccscc" inkscape:connector-curvature="0" id="path4577" d="m 624.8524,261.08061 c 11.55273,14.64354 31.04751,25.51919 51.36294,25.51919 14.07151,0 26.8867,-7.72608 37.36294,-14.72094 l -0.44079,62.62774 c -10.58999,2.80076 -21.86803,4.0932 -33.42215,4.0932 -46.02588,0 -86.86149,-25.75574 -107.54879,-60.84868 z" style="opacity:0;fill:#782121"></path>
+									<!--Right 6-->
+									<path ng-click="shot_attempt(2,'B5',false)" sodipodi:nodetypes="ccscccc" inkscape:connector-curvature="0" id="path4579" d="m 712.94075,70.651834 -0.17387,46.106956 c -10.75959,-2.61548 -29.36545,-6.03399 -40.27029,-6.03399 -24.61984,0 -45.94109,7.9047 -63.2152,19.90034 L 568.6041,80.995348 c 2.10431,-1.63215 10.08143,-8.28942 12.2567,-9.84069 z" style="opacity:0;fill:#5500d4"></path>
+									<!--Right 7-->
+									<path ng-click="shot_attempt(2,'B4',false)" sodipodi:nodetypes="cccccccccccc" inkscape:connector-curvature="0" id="path4581" d="m 570.46599,80.601538 38.7635,50.034202 c -13.84359,10.13971 -25.91049,24.2482 -35.02652,39.52534 l 0.28125,0.0937 c -0.79737,0.41288 -0.68681,0.36355 -0.84375,1.40625 -0.0101,-0.0132 -0.0281,-0.0441 -0.0313,-0.0313 -0.0207,0.0894 -0.0329,0.19915 -0.0313,0.28125 -0.0873,0.22119 -0.20326,0.45808 -0.34375,0.75 l -0.40625,-0.125 c -1.59259,2.82568 -2.39078,7.24407 -3.72813,10.20377 l -58.41715,-17.86879 c 11.72726,-32.73581 32.381,-62.39977 59.7834,-84.269422 z" style="opacity:0;fill:#5500d4;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none"></path>
+									<!--Right 9-->
+									<path ng-click="shot_attempt(2,'B2',false)" sodipodi:nodetypes="ccccccccccc" inkscape:connector-curvature="0" id="path4583" d="m 568.14893,266.30637 c 1.43365,3.30483 3.30519,7.80706 5.05538,10.94846 l 1.5,-0.5 0,1.40625 c 0.0962,0.3434 0.13056,0.70801 0.28125,1.03125 0.0384,0.0823 0.0795,0.14225 0.125,0.21875 l -0.5625,0.1875 c 8.55296,14.50883 20.7004,27.57648 34.93037,37.33717 L 568.8315,367.36722 C 541.80941,346.02959 522.50418,314.68505 510.47624,282.7806 z" style="opacity:0;fill:#5500d4"></path>
+									<!--Right 8-->
+									<path ng-click="shot_attempt(2,'B3',false)" sodipodi:nodetypes="ccsccsc" inkscape:connector-curvature="0" id="path4585" d="m 511.36884,164.568 57.47314,18.15406 c -5.3962,12.81214 -9.03289,27.84567 -9.03289,42.44024 0,14.02556 3.48776,28.65107 8.48629,41.04989 l -57.30482,16.60746 c -6.7884,-18.89908 -9.01206,-39.79063 -9.01206,-60.8454 0,-20.02456 3.22468,-39.30962 9.39034,-57.40625 z" style="opacity:0;fill:#5500d4"></path>
+									<!--Right 10-->
+									<path ng-click="shot_attempt(2,'B1',false)" sodipodi:nodetypes="cscccccc" inkscape:connector-curvature="0" id="path4587" d="m 609.80435,316.65889 c 19.76192,12.89634 45.98002,21.62786 71.94279,21.62786 10.85588,0 21.35996,-1.35939 31.375,-3.84375 l -0.2193,43.39036 -126.39419,-0.16448 -3.56359,0.0603 c -3.87719,-2.56641 -10.87924,-7.16855 -14.05374,-10.41996 z" style="opacity:0;fill:#5500d4"></path>
+									<!--Right 5-->
+									<rect ng-click="shot_attempt(3,'A1',false)" ry="0.10964912" y="377.81979" x="-712.75574" height="22.110806" width="129.96957" style="opacity:0;fill:#333333" id="rect4589" transform="scale(-1,1)"></rect>
+									<!--Right 1-->
+									<rect ng-click="shot_attempt(3,'A5',false)" ry="0" y="48.792336" x="-712.86536" height="22.013098" width="129.14255" style="opacity:0;fill:#333333" id="rect4591" transform="scale(-1,1)"></rect>
+									<!--Right 2-->
+									<path ng-click="shot_attempt(3,'A4',false)" sodipodi:nodetypes="cccccc" inkscape:connector-curvature="0" id="path4593" d="M 583.19026,49.071478 582.3945,70.236121 C 547.10536,95.883973 523.43988,128.08394 509.03855,170.46753 L 381.53947,142.30389 381.25594,47.346931 z" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none"></path>
+									<!--Right 3-->
+									<path ng-click="shot_attempt(3,'A3',false)" sodipodi:nodetypes="ccsccc" inkscape:connector-curvature="0" id="path4595" d="M 381.46583,142.35153 508.8669,171.4257 c -4.57993,15.9184 -6.79,34.10334 -6.79,51.40977 0,18.74855 1.39422,36.9112 6.73877,54.00173 l -127.35924,27.49769 z" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none"></path>
+									<!--Right 4-->
+									<path ng-click="shot_attempt(3,'A2',false)" sodipodi:nodetypes="cccccc" inkscape:connector-curvature="0" id="path4597" d="m 508.92257,277.33006 c 13.70692,41.00775 37.99277,76.64573 74.08279,100.55757 l -0.0548,21.93641 -201.63816,0.71271 0,-95.7659 z" style="opacity:0;fill:#782121;stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none"></path>
+									<!--Right 12-->
+									<path ng-click="shot_attempt(2,'C2',false)" sodipodi:nodetypes="ccsccsc" inkscape:connector-curvature="0" id="path4653" d="m 574.58431,171.29169 51.48355,17.76644 c -6.70719,9.85684 -11.00877,22.73172 -11.00877,35.47917 0,13.29294 4.47767,26.13708 11.7193,36.23575 l -52.96875,17.37554 c -8.69384,-15.60454 -13.81305,-34.09928 -13.81305,-52.89254 0,-18.98424 5.72801,-38.2449 14.58772,-53.96436 z" style="opacity:0;fill:#782121"></path>
+									<!--Right 14-->
+									<path ng-click="shot_attempt(2,'ATR',false)" sodipodi:nodetypes="sccsss" inkscape:connector-curvature="0" id="path4655" d="m 678.20824,163.53967 c 14.02825,0 25.3352,5.58196 35.79277,13.15899 l -0.32895,94.85033 c -10.45757,7.57703 -23.08031,14.80373 -37.10855,14.80373 -34.70986,0 -61.52797,-28.41397 -61.52797,-62.26809 0,-33.85412 28.46284,-60.54496 63.1727,-60.54496 z" style="opacity:0;fill:#00aa88"></path>
+									<!--ATR in paint -->
+									<path ng-click="shot_attempt(2,'ATR',true)" sodipodi:nodetypes="ccccccccccccccccccccccc" inkscape:connector-curvature="0" id="path3217" d="m 679.46053,168.00487 c 4.06217,0.0579 11.22483,-0.63658 15.15212,0.40344 4.07196,0.15781 4.28625,-0.4277 7.95702,1.64602 3.23429,1.76441 6.30649,3.81159 9.30184,5.95241 0.0417,32.35417 0.0833,64.70833 0.125,97.0625 -6.13196,4.46723 -12.78199,8.33058 -20.00358,10.73859 -5.60098,0.23542 -11.60955,0.16078 -16.69747,0.3104 -6.43675,0.0383 -16.76363,-0.0958 -11.95625,-0.0136 -5.19972,-0.96708 -9.3232,-1.42467 -14.09123,-3.70802 -4.92042,-2.40665 -9.54219,-5.43982 -13.64512,-9.07433 -2.88947,-2.51743 -5.52208,-5.3264 -7.89372,-8.33433 -2.40565,-3.09307 -4.54233,-6.39153 -6.3421,-9.87327 -1.59522,-3.0504 -2.88692,-6.25729 -3.9749,-9.52084 -1.28839,-4.06589 -2.22929,-8.24772 -2.66078,-12.49462 -0.6264,-5.70406 -0.48868,-11.49581 0.50917,-17.15033 0.65468,-3.85521 1.73059,-7.63195 3.16854,-11.26768 1.29478,-3.34432 2.93662,-6.55667 4.82188,-9.60582 4.64305,-7.44967 10.93913,-13.84121 18.25137,-18.68798 3.83166,-2.53126 7.95793,-4.61519 12.22948,-6.29534 0.97107,-0.35702 -2.43876,1.09261 -1.48995,0.82108 4.86885,-1.66188 13.97981,-0.5422 19.10502,-0.98004 2.39522,-0.18323 5.73112,-0.004 8.13366,0.0718 z" style="opacity:0;fill:#d40000" />
+									<!--C2 in paint -->
+									<path ng-click="shot_attempt(2,'C2',true)" sodipodi:nodetypes="ccsccsc" inkscape:connector-curvature="0" id="path3219" d="m 579.76343,173.58955 46.43969,15.79276 c -6.70719,9.85684 -11.00877,22.73172 -11.00877,35.47917 0,13.29295 4.47767,26.13709 11.7193,36.23576 l -47.55052,15.18256 c 0.94545,-18.91146 0.62257,-28.64835 0.66063,-50.04168 0.0337,-18.94925 0.0905,-32.98174 -0.26033,-52.64857 z" style="opacity:0;fill:#ff0000" />
+									<!--C1 in paint -->
+									<path ng-click="shot_attempt(2,'C1',true)" sodipodi:nodetypes="cccccsccscccccccccc" inkscape:connector-curvature="0" style="opacity:0;fill:#ff0000" d="m 596.02867,283.50978 c 23.13656,1.1398 51.10119,0.42285 51.10119,0.42285 l 1.58842,-0.24937 c 1.2899,0 11.44086,0.34722 13.36916,0.35702 l -4.20468,-0.97842 c -7.88542,-1.30002 -19.01318,-9.03958 -25.7652,-15.17753 -4.00924,-3.64461 -6.14831,-6.73765 -6.522,-6.87614 l -45.8125,15.46875 c 0.40722,3.48787 -0.0951,7.48767 1.25219,7.56634 3.8304,0.22367 9.32802,0.11001 16.74781,0.12445 z m 99.9545,-0.97807 c 0.18616,-0.066 3.33773,-0.11952 3.52303,-0.1875 -0.17096,2.2e-4 2.62549,-1.80936 1.24671,-2.08331 z m -3.11075,1.12829 c 5.8885,-0.008 16.24531,0.44032 18.99781,0.33717 l 0.12336,-10.79714 c -4.67073,3.29978 -13.78065,8.1824 -19.12117,10.45997 z" id="path3223" />
+									<!--C3 in paint -->
+									<path ng-click="shot_attempt(2,'C3',true)" inkscape:connector-curvature="0" id="path3221" d="m 597.78306,167.36986 c 22.25936,-0.0433 53.84375,0.625 53.84375,0.625 l -2.625,0.15625 c 1.28989,0 3.9467,-0.0215 5.875,-0.0313 l 0,0.1875 c -11.80665,4.0774 -22.11045,11.31303 -29.28125,20.90625 l -45.8125,-15.46875 c 0.40722,-3.48787 -0.97232,-5.95258 0.375,-6.03125 3.8304,-0.22367 10.20521,-0.32931 17.625,-0.34375 z m 99.40625,0.375 c 0.18616,0.066 0.37721,0.11951 0.5625,0.1875 -0.17096,-2.2e-4 -0.38986,1.6e-4 -0.5625,0 l 0,-0.1875 z m 0.5625,0.1875 c 5.8885,0.008 10.8725,0.0531 13.625,0.15625 l 0.78125,7.5625 c -4.67072,-3.29978 -9.39468,-5.87977 -14.40625,-7.71875 z" style="opacity:0;fill:#ff0000" />
+									<!--===============================END OF RIGHT SIDE===============================-->
+								</g>
+							</svg>
+						</div>
+
+						<section class="panel panel-default">
+							<div class="panel-heading "><strong><span class="glyphicon glyphicon-th"></span>Play By Play</strong></div>
+							<div class="panel-body">
+
+								<div class="table-responsive">
+									<table class="table table-striped table-bordered">
+										<thead>
+											<tr class="bg-facebook">
+												<th>{{game.teams[0].team_name}}</th>
+												<th>{{game.teams[1].team_name}}</th>
+												<th>Period</th>
+												<th>Time</th>
+												<th>Player</th>
+												<th>Action</th>											
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="play in play_by_plays.actions | orderBy:['period','-game_time']:true">
+												<td>{{play.light_score}} </td>
+												<td>{{play.dark_score}}</td>
+												<td>{{play.period < 5 ? 'Q'+play.period:'OT'+(play.period-4)}}</td>
+												<td>{{play.game_time}}</td>
+												<td>{{play.player_no}} {{play.player_name}}</td>
+												<td>{{play.desc}}</td>	
+
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>

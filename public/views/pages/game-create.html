@@ -1,0 +1,116 @@
+
+<section class="page-form-ele page" ng-controller="GameCreateCtrl">
+
+  <!-- Select -->
+  <section class="panel panel-default">
+    <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Select</strong></div>
+    <div class="panel-body">
+      <div>
+        Game No.
+        <span class="ui-input">
+          <input class="form-contro" type="number" ng-model="game.no">
+        </span>
+        Light:
+        <span class="ui-select">
+          <select ng-options="opt as opt.team_name for opt in options.teams" ng-model="game.teams[0]"></select>
+        </span>
+        Dark:
+        <span class="ui-select">
+          <select ng-options="opt as opt.team_name for opt in options.teams" ng-model="game.teams[1]"></select>
+        </span>
+        <button ng-click="save()" class="btn btn-success">Create</button>
+      </div>
+      <div>
+       Venue:
+       <span class="ui-select">
+        <select ng-options="opt as opt.name for opt in options.venue" ng-model="game.venue"></select>
+      </span>
+
+      Game Type:
+      <span class="ui-select">
+        <select ng-options="opt as opt.name for opt in options.type" ng-model="game.type"></select>
+      </span>
+    </div>
+    <div>
+      Officials: <button class="btn btn-facebook" ng-click="add_official()">+</button>
+      <div ng-repeat="official in game.officials">
+        <span class="ui-select">
+          <select ng-options="opt as opt.no+' - '+opt.last_name for opt in options.officials" ng-model="officials"></select>      
+        </span>
+        <button class="btn btn-facebook" ng-click="remove_official(game.officials.indexOf(official))"> - </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-default">
+    <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Starters</strong></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-6">
+          <h1>{{game.teams[0].team_name}}&nbsp;</h1>
+          <div ng-show="game.teams[0]._id">
+            <select class="" ng-model="light_selected_player" ng-options="opt.no+' - '+opt.last_name for opt in game.teams[0].players|filter:{starter:false}"></select>
+            <button class="btn btn-facebook" ng-click="light_selected_player.starter=true">Add Starter</buton>
+          </div>
+          <table class="table table-bordered table-hover table-striped">
+            <tr>
+              <td>Player No</td>
+              <td>Player Name</td>
+              <td>Player Position</td>
+            </tr>
+            <tr ng-repeat="player in game.teams[0].players|filter:{starter:true}">
+              <td>{{player.no}}</td>
+              <td>{{player.last_name+' '+player.first_name}}</td>
+              <td>{{player.position}}</td>
+            </tr>
+          </table>
+        </div>
+          <div class="col-sm-6">
+            <h1>{{game.teams[1].team_name}}&nbsp;</h1>
+          <div ng-show="game.teams[1]._id">
+            <select class="" ng-model="light_selected_player" ng-options="opt.no+' - '+opt.last_name for opt in game.teams[1].players|filter:{starter:false}"></select>
+            <button class="btn btn-facebook" ng-click="light_selected_player.starter=true">Add Starter</buton>
+          </div>
+            <table class="table table-bordered table-hover table-striped">
+              <tr>
+                <td>Player No</td>
+                <td>Player Name</td>
+                <td>Player Position</td>
+              </tr>
+              <tr ng-repeat="player in game.teams[1].players|filter:{starter:true}">
+                <td>{{player.no}}</td>
+                <td>{{player.last_name+' '+player.first_name}}</td>
+                <td>{{player.position}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-default">
+    <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Games</strong></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-6">
+          <table class="table table-bordered table-hover table-striped">
+            <tr>
+              <td>Game No</td>
+              <td>Season</td>
+              <td>Light</td>
+              <td>Dark</td>
+            </tr>
+            <tr ng-repeat="game in games">
+              <td><a href='/api/game/{{game._id}}'>{{game.no}}</a></td>
+              <td>{{game.season.no}}</td>
+              <td>{{game.teams[0].team_name}} {{game.teams[0].score}}</td>
+              <td>{{game.teams[1].team_name}} {{game.teams[1].score}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</section>

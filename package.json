@@ -1,0 +1,14 @@
+{
+  "name": "uaap-live-stats",
+  "description": "uaap-live-stats",
+  "version": "0.0.1",
+  "private": true,
+  "main": "server.js",
+  "author": "Vhilly",
+  "dependencies": {
+    "express": "4.x",
+    "socket.io": "1.x",
+     "mongoose": "~3.8.12",
+    "body-parser":"~1.4.3"
+  }
+}

@@ -1,0 +1,27 @@
+<div class="page" ng-controller="PlayByPlayCtrl">
+    <section class="ui-timeline">
+        
+        <article class="tl-item">
+            <div class="tl-body">
+                <div class="tl-entry">
+                    <div class="tl-caption">
+                        <a href="javascript:;" class="btn btn-primary btn-block">Q1</a>
+                    </div>
+                </div>
+            </div>
+        </article>
+ 
+        <article class="tl-item " ng-repeat="play in play_by_plays">
+            <div class="tl-body">
+                <div class="tl-entry">
+                    <div class="tl-icon round-icon sm bg-info">33</div>
+                    <div class="tl-content">
+                        
+                        <p>{{play}}</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+</div>
