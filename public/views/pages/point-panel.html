@@ -49,7 +49,7 @@
 									<th>IN/OUT</th>
 								</tr>
 								<tr class="" ng-repeat="player in game.boxscore[0].players|orderBy:'oncourt':true">
-									<td ng-click="get_player_box(0,player)">{{player.no}}}}</td>
+									<td ng-click="get_player_box(0,player)">{{player.no}}</td>
 									<td>{{player.last_name +' '+player.first_name}}</td>
 									<td>
 										<button ng-show="!player.oncourt" class="btn btn-facebook" ng-click="sub_in(true,player,0)">IN</button>
@@ -438,7 +438,9 @@
 												<th>Period</th>
 												<th>Time</th>
 												<th>Player</th>
-												<th>Action</th>											
+                                                                                                <th>Action</th>
+                                                                                                <th></th>
+                                                                                                <th></th>											
 											</tr>
 										</thead>
 										<tbody>
@@ -449,6 +451,7 @@
 												<td>{{play.game_time}}</td>
 												<td>{{play.player_no}} {{play.player_name}}</td>
 												<td>{{play.desc}}</td>	
+												<td><button class="btn btn-danger" ng-click="delete_play(play)">Delete</button></td>	
 
 											</tr>
 										</tbody>

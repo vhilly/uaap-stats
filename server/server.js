@@ -127,6 +127,7 @@
 						starter:Boolean,
 						position:String,
 						mins:{type:Number,default:0},
+						plus_minus:{type:Number,default:0},
 						ass:{type:Number,default:0},
 						tov:{
 							tot:{type:Number,default:0},
@@ -199,6 +200,7 @@
 							wa:{type:Number,default:0}
 						},period:[{
 						mins:{type:Number,default:0},
+						plus_minus:{type:Number,default:0},
 						ass:{type:Number,default:0},
 						tov:{
 							tot:{type:Number,default:0},
@@ -346,6 +348,7 @@
 					},
 					period:[{
 					mins:{type:Number,default:0},
+				        plus_minus:{type:Number,default:0},
 					pts:{type:Number,default:0},
 					ass:{type:Number,default:0},
 					tov:{type:Number,default:0},
