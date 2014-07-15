@@ -100,12 +100,14 @@
               <td>Season</td>
               <td>Light</td>
               <td>Dark</td>
+              <td></td>
             </tr>
             <tr ng-repeat="game in games">
               <td><a href='/api/game/{{game._id}}'>{{game.no}}</a></td>
               <td>{{game.season.no}}</td>
               <td>{{game.teams[0].team_name}} {{game.teams[0].score}}</td>
               <td>{{game.teams[1].team_name}} {{game.teams[1].score}}</td>
+              <td><a class="btn btn-info" href="#/game/boxscore/{{game._id}}">Boxscores</a> <a class="btn btn-primary" href="#/game/edit/{{game._id}}">EDIT</a></td>
             </tr>
           </table>
         </div>

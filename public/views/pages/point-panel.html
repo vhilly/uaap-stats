@@ -255,6 +255,7 @@
 									<th></th>
 									<th></th>
 								</tr>
+								
 							</table>
 						</div>
 					</div>
@@ -424,6 +425,17 @@
 								</g>
 							</svg>
 						</div>
+						<section class="panel panel-default">
+							<div class="panel-heading "><strong><span class="glyphicon glyphicon-th"></span>Play By Play</strong></div>
+							<div class="panel-body">
+								{{selected_play}}
+								<select ng-model="updated_play.op.team_index"><option value=0>{{game.teams[0].team_name}}</option><option value=1>{{game.teams[1].team_name}}</option></select>
+								<select ng-options="game.boxscore[updated_play.op.team_index].players.indexOf(player) as  player.last_name for player in game.boxscore[updated_play.op.team_index].players" ng-model="updated_play.op.player_index"></select> 
+								<input type="text" ng-model="updated_play.period">
+								<input type="text" ng-model="updated_play.game_time"><br>
+								<button ng-click="save_play()">Save</button>
+							</div>
+						</section>
 
 						<section class="panel panel-default">
 							<div class="panel-heading "><strong><span class="glyphicon glyphicon-th"></span>Play By Play</strong></div>
@@ -451,7 +463,7 @@
 												<td>{{play.game_time}}</td>
 												<td>{{play.player_no}} {{play.player_name}}</td>
 												<td>{{play.desc}}</td>	
-												<td><button class="btn btn-danger" ng-click="delete_play(play)">Delete</button></td>	
+												<td><button class="btn btn-primary" ng-click="edit_play(play)">Edit</button><button class="btn btn-danger" ng-click="delete_play(play)">Delete</button></td>	
 
 											</tr>
 										</tbody>

@@ -1,0 +1,292 @@
+
+<div class="page page-table">
+
+    <section class="panel panel-default table-dynamic" ng-repeat="team in teams">
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"> {{team.team_name}}</span> </strong></div>
+
+        <div class="table-filters">
+            <div class="row">
+
+               <div class="col-md-6 page-num-info">
+                    <span>
+                     
+                    </span>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="th">
+                            STARTERS
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>                    
+                    <th>
+                        <div class="th">
+                            MIN
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            FGM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            3PM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            FTM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            OREB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            DREB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            REB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            AST
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            STL
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            BLK
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            TO
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            PF
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            +/-
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            PTS
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="player in team.starters">
+                <td>{{player.last_name}}, {{player.first_name}}</td>
+                <td>{{player.mins}}</td>
+                <td>{{player.fg.md}}-{{player.fg.att}}</td>
+                <td>{{player.fg3.md}}-{{player.fg3.att}}</td>
+                <td>{{player.ft.md}}-{{player.ft.att}}</td>
+                <td>{{player.reb.off}}</td>
+                <td>{{player.reb.def}}</td>
+                <td>{{player.reb.tot}}</td>
+                <td>{{player.ass}}</td>
+                <td>{{player.stl}}</td>
+                <td>{{player.blk.bl}}</td>
+                <td>{{player.tov.tot}}</td>
+                <td>{{player.fou.tot}}</td>
+                <td>{{player.plus_minus}}</td>
+                <td>{{player.pts}}</td>
+            </tbody>
+
+        </table>
+        <br><br>
+        <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="th">
+                            BENCH
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>                    
+                    <th>
+                        <div class="th">
+                            MIN
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            FGM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            3PM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            FTM-A
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            OREB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            DREB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            REB
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            AST
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            STL
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="th">
+                            BLK
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            TO
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            PF
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            +/-
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                     <th>
+                        <div class="th">
+                            PTS
+                            <span class="glyphicon glyphicon-chevron-up active" data-ng-click=" order('name') " data-ng-class="{active: row == 'name'}"></span>
+                            <span class="glyphicon glyphicon-chevron-down" data-ng-click=" order('-name') " data-ng-class="{active: row == '-name'}"></span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="player in team.bench">
+                <td>{{player.last_name}}, {{player.first_name}}</td>
+                <td>{{player.mins}}</td>
+                <td>{{player.fg.md}}-{{player.fg.att}}</td>
+                <td>{{player.fg3.md}}-{{player.fg3.att}}</td>
+                <td>{{player.ft.md}}-{{player.ft.att}}</td>
+                <td>{{player.reb.off}}</td>
+                <td>{{player.reb.def}}</td>
+                <td>{{player.reb.tot}}</td>
+                <td>{{player.ass}}</td>
+                <td>{{player.stl}}</td>
+                <td>{{player.blk.bl}}</td>
+                <td>{{player.tov.tot}}</td>
+                <td>{{player.fou.tot}}</td>
+                <td>{{player.plus_minus}}</td>
+                <td>{{player.pts}}</td>
+            </tbody>
+
+        </table>
+
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

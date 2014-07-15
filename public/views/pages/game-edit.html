@@ -1,0 +1,92 @@
+
+<div class="page page-table">
+    <button ng-click="save()">SAVE</button>
+    <section class="panel panel-default table-dynamic" ng-init="tid=$index" ng-repeat="team in teams">
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"> {{team.team_name}}</span> </strong></div>
+
+        <div class="table-filters">
+            <div class="row">
+
+               <div class="col-md-6 page-num-info">
+                    <span>
+                     
+                    </span>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="th">
+                            STARTERS 
+                        </div>
+                    </th>                    
+                    <th>
+                        <div class="th">
+                            TOTAL
+                        </div>
+                    </th>                                               
+                    <th ng-repeat="period in periods">
+                        <div class="th">
+                            {{period}}
+                        </div>
+                    </th>
+                    <th></th>     
+                </tr>
+            </thead>
+            <tbody ng-repeat="player in team.starters">
+                <td>{{player.last_name}}, {{player.first_name}}</td>
+                <td>{{(player.mins/1000)/60}}</td>
+                <td ng-repeat="period in player.period" >{{(period.mins/1000)/60}}</td>
+                <td><button class="btn btn-danger" ng-show="!player.mins" ng-click="remove_player(player)">REMOVE FROM CURRENT LINEUP</button></td>
+            </tbody>
+
+        </table>
+        <br><br>
+        <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="th">
+                            BENCH 
+                        </div>
+                    </th>                    
+                    <th>
+                        <div class="th">
+                            MIN 
+                        </div>
+                    </th>     
+                     <th ng-repeat="period in periods">
+                        <div class="th">
+                            {{period}}
+                        </div>
+                    </th>
+                    <th></th>                   
+                </tr>
+            </thead>
+            <tbody ng-repeat="player in team.bench">
+                <td>{{player.last_name}}, {{player.first_name}}</td>
+                <td>{{(player.mins/1000)/60}}</td>
+                <td ng-repeat="period in player.period" >{{(period.mins/1000)/60}}</td>     
+                <td><button class="btn btn-danger" ng-show="!player.mins" ng-click="remove_player(player,tid)">REMOVE FROM CURRENT LINEUP</button></td>
+            </tbody>
+
+        </table>
+
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
