@@ -1374,7 +1374,6 @@ $scope.saveGame();
 
 
     var stats_minus =function(play){        
-        alert(play.game_event)
            switch (play.game_event) {            
                 case 'assist':
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].ass -= 1;
@@ -1423,7 +1422,6 @@ $scope.saveGame();
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].reb.tot -= 1;
                 break;
                 case 'foul':
-                alert(play.op.is_offensive)
                 if (play.op.is_offensive) {
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.off -= 1;
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.off -= 1;
