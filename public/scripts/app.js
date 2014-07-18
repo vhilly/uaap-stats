@@ -1339,7 +1339,8 @@ $scope.saveGame();
             return
         $scope.$broadcast('timer-add-cd-seconds', secs);
     }
-    $scope.edit_play = function(play){          
+    $scope.edit_play = function(play){    
+    console.log(play);      
         $scope.updated_play = angular.copy(play);
         $scope.selected_play = play;
     }
@@ -1348,13 +1349,19 @@ $scope.saveGame();
         //$scope.selected_play = $scope.updated_play;        
         $scope.selected_play.team_id = $scope.game.boxscore[$scope.updated_play.op.team_index].team._id;
         $scope.selected_play.team_name = $scope.game.boxscore[$scope.updated_play.op.team_index].team.team_name;
-        $scope.selected_play.player_id = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index]._id;
-        $scope.selected_play.player_no = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].no;
+        $scope.selected_play.period = $scope.updated_play.period;
+        $scope.selected_play.game_time = $scope.updated_play.game_time;
+        if($scope.selected_play.op.player_index>-1){
+            $scope.selected_play.player_id = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index]._id;
+            $scope.selected_play.player_no = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].no;
+            $scope.selected_play.player_name = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].last_name+', '+$scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].first_name; 
+        }   
         $scope.selected_play.op = $scope.updated_play.op;
-        $scope.selected_play.player_name = $scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].last_name+', '+$scope.game.boxscore[$scope.updated_play.op.team_index].players[$scope.updated_play.op.player_index].first_name; 
         stats_add($scope.selected_play);
-        PlayByPlay.save($scope.play_by_plays);
+        PlayByPlay.save($scope.play_by_plays);        
         $scope.saveGame();
+        $scope.selected_play = {};
+        $scope.updated_play={};
     }
     $scope.delete_play = function (play) {
         if (confirm('Are you Sure?')) {
@@ -1366,13 +1373,31 @@ $scope.saveGame();
     };
 
 
-    var stats_minus =function(play){
-           switch (play.game_event) {
+    var stats_minus =function(play){        
+        alert(play.game_event)
+           switch (play.game_event) {            
                 case 'assist':
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].ass -= 1;
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].ass -= 1;
                 $scope.game.boxscore[play.op.team_index].team.ass -= 1;
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].ass -= 1;;
+                break;
+                case 'steal':
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].stl -= 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].stl -= 1;
+                $scope.game.boxscore[play.op.team_index].team.stl -= 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].stl -= 1;;
+                break;
+                case 'turn_over':
+                if(play.op.player_index>-1){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.tot -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.tot -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov[play.op.type] -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov[play.op.type] -= 1;
+                } 
+                $scope.game.boxscore[play.op.team_index].team.tov -= 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].tov -= 1;
+                
                 break;
                 case 'block':
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].blk.bl -= 1;
@@ -1417,10 +1442,34 @@ $scope.saveGame();
                     }
                 }
                 //todo add to, adjust plusminus
+                 if(play.op.wa){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.wa -= 1;
+                }
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tot -= 1;
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tot -= 1;
                 $scope.game.boxscore[play.op.team_index].team.fou.tot -= 1;
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tot -= 1;
+
+                break;
+                case 'team_foul':
+                 if(play.op.wa){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.fou.wa -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.wa -= 1;
+                }
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tf -= 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tf -= 1;
+                $scope.game.boxscore[play.op.team_index].team.fou.tf -= 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tf -= 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tot -= 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tot -= 1;
+                $scope.game.boxscore[play.op.team_index].team.fou.tot -= 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tot -= 1;
+
                 break;
                 case 'free_throw':
                 if(play.op.made){
@@ -1535,6 +1584,18 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.in_paint.att -=1;
                 }
                            //total fg atts
+                if(play.op.is_contested){
+                    if(play.op.made){
+                        $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.contested.md -= 1;
+                        $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.contested.md-=1;
+                        $scope.game.boxscore[play.op.team_index].team.fg.contested.md -= 1;
+                        $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.contested.md -=1;    
+                    }
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.contested.att -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.contested.att-=1;
+                    $scope.game.boxscore[play.op.team_index].team.fg.contested.att -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.contested.att -=1;
+                }
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.att -= 1;
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.att-=1;
                 $scope.game.boxscore[play.op.team_index].team.fg.att -= 1;
@@ -1548,13 +1609,31 @@ $scope.saveGame();
     }
 
 
-    var stats_add =function(play){
+    var stats_add =function(play){             
            switch (play.game_event) {
                 case 'assist':
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].ass += 1;
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].ass += 1;
                 $scope.game.boxscore[play.op.team_index].team.ass += 1;
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].ass +=1;;
+                break;
+                case 'turn_over':
+                if(play.op.player_index>-1){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.tot += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.tot += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov[play.op.type] += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov[play.op.type] += 1;
+                }
+                $scope.game.boxscore[play.op.team_index].team.tov += 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].tov += 1;
+                
+                break;
+
+                case 'steal':
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].stl += 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].stl += 1;
+                $scope.game.boxscore[play.op.team_index].team.stl += 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].stl += 1;;
                 break;
                 case 'block':
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].blk.bl += 1;
@@ -1603,6 +1682,29 @@ $scope.saveGame();
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tot += 1;
                 $scope.game.boxscore[play.op.team_index].team.fou.tot += 1;
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tot += 1;
+                if(play.op.wa){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.wa += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.wa += 1;
+                    $scope.game.boxscore[play.op.team_index].team.fou.wa += 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.wa += 1;
+                }
+                break;
+                case 'team_foul':
+                 if(play.op.wa){
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.wa += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.wa +=1;
+                    $scope.game.boxscore[play.op.team_index].team.fou.wa += 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.wa += 1;
+                }
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tf += 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tf += 1;
+                $scope.game.boxscore[play.op.team_index].team.fou.tf += 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tf += 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tot += 1;
+                $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.tot += 1;
+                $scope.game.boxscore[play.op.team_index].team.fou.tot += 1;
+                $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.tot += 1;
+
                 break;
                 case 'free_throw':
                 if(play.op.made){
@@ -1717,6 +1819,18 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.in_paint.att +=1;
                 }
                            //total fg atts
+                if(play.op.is_contested){
+                    if(play.op.made){
+                        $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.contested.md += 1;
+                        $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.contested.md+=1;
+                        $scope.game.boxscore[play.op.team_index].team.fg.contested.md += 1;
+                        $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.contested.md +=1;    
+                    }
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.contested.att+= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.contested.att+=1;
+                    $scope.game.boxscore[play.op.team_index].team.fg.contested.att+= 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period-1].fg.contested.att+=1;
+                }
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fg.att += 1;
                 $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].fg.att+=1;
                 $scope.game.boxscore[play.op.team_index].team.fg.att += 1;
@@ -1922,31 +2036,47 @@ $scope.saveGame();
                 $scope.selected_player.tov.tot[type] += 1;
                 $scope.selected_player.period[$scope.game.period - 1].tov.tot += 1;
                 $scope.selected_player.period[$scope.game.period - 1].tov[type] += 1;
-            }
-            $scope.game.boxscore[$scope.selected_team].team.tov += 1;
-            $scope.game.boxscore[$scope.selected_team].team.tov[type] += 1;
-            $scope.game.boxscore[$scope.selected_team].team.period[$scope.game.period - 1].tov += 1;
-            $scope.game.boxscore[$scope.selected_team].team.period[$scope.game.period - 1].tov[type] += 1;
-            var action = {
+
+                var action = {
+                    game_event: 'turn_over',
+                    period: $scope.game.period,
+                    game_time: $scope.game.clock,
+                    team_id: $scope.game.teams[$scope.selected_team]._id,
+                    team_name: $scope.game.teams[$scope.selected_team].team_name,
+                    player_id: $scope.selected_player._id,
+                    player_no: $scope.selected_player.no,
+                    player_name: $scope.selected_player.last_name + ' ' + $scope.selected_player.first_name,
+                    desc: 'Turnover',
+                    light_score: $scope.game.teams[0].score,
+                    dark_score: $scope.game.teams[1].score,
+                    lead: $scope.game.teams[0].score - $scope.game.teams[1].score,
+                    op: {
+                        player_index: $scope.game.boxscore[$scope.selected_team].players.indexOf($scope.selected_player),
+                        team_index: $scope.selected_team,
+                        tov: $scope.selected_player.tov.tot,
+                        type: type,
+                     }
+                };
+            }else{
+                var action = {
                 game_event: 'turn_over',
                 period: $scope.game.period,
                 game_time: $scope.game.clock,
                 team_id: $scope.game.teams[$scope.selected_team]._id,
                 team_name: $scope.game.teams[$scope.selected_team].team_name,
-                player_id: $scope.selected_player._id,
-                player_no: $scope.selected_player.no,
-                player_name: $scope.selected_player.last_name + ' ' + $scope.selected_player.first_name,
-                desc: 'Turnover',
+                desc: 'Team Turnover',
                 light_score: $scope.game.teams[0].score,
                 dark_score: $scope.game.teams[1].score,
                 lead: $scope.game.teams[0].score - $scope.game.teams[1].score,
                 op: {
-                    player_index: $scope.game.boxscore[$scope.selected_team].players.indexOf($scope.selected_player),
                     team_index: $scope.selected_team,
-                    tov: $scope.selected_player.tov.tot,
                     type: type,
                 }
             };
+            }
+            $scope.game.boxscore[$scope.selected_team].team.tov += 1;
+            $scope.game.boxscore[$scope.selected_team].team.period[$scope.game.period - 1].tov += 1;
+
             $scope.selected_player = '';
             $scope.current_action = '';
             $scope.saveGame(action);
@@ -2019,8 +2149,10 @@ $scope.saveGame();
 
                 $scope.selected_player.pts += $scope.field_goal.value;
                 $scope.selected_player.period[$scope.game.period - 1].pts += $scope.field_goal.value;
+
                 $scope.game.teams[$scope.selected_team].score += $scope.field_goal.value;
-                $scope.game.teams[$scope.selected_team].pts += $scope.field_goal.value;
+
+                $scope.game.boxscore[$scope.selected_team].team.pts+=$scope.field_goal.value;
                 $scope.game.boxscore[$scope.selected_team].team.period[$scope.game.period - 1].pts += $scope.field_goal.value;
 
 
@@ -2179,7 +2311,6 @@ $scope.saveGame();
                 desc = $scope.field_goal.made ? '3-Point Made' : '3-Point Missed';
             else 
                 desc = $scope.field_goal.made ? '2-Point Made' : '2-Point Missed';
-            alert(desc);
             var action = {
                 game_event: 'field_goal',
                 period: $scope.game.period,
@@ -2219,6 +2350,30 @@ $scope.saveGame();
         };
 
         function save_play(action) {
+            var pid='',players_on_court=[];
+            action.op.players_on_court = [];
+            angular.forEach($scope.players_on_court[0],function(player){
+                console.log(player)
+                var player_oc={};
+                pid = $scope.game.boxscore[0].players.indexOf(player);
+                player_oc.player_id =player._id;
+                player_oc.player_no =player.no;
+                player_oc.player_name =player.last_name+', '+player.first_name;
+                player_oc.player_index=pid;
+                players_on_court.push(player_oc);
+            });
+            action.op.players_on_court[0] = players_on_court;
+            angular.forEach($scope.players_on_court[1],function(player){
+                console.log(player)
+                var player_oc={};
+                pid = $scope.game.boxscore[1].players.indexOf(player);
+                player_oc.player_id =player._id;
+                player_oc.player_no =player.no;
+                player_oc.player_name =player.last_name+', '+player.first_name;
+                player_oc.player_index=pid;
+                players_on_court.push(player_oc);
+            });
+            action.op.players_on_court[1] = players_on_court;
             $scope.play_by_plays.actions.push(action);
             PlayByPlay.save($scope.play_by_plays);
             //socket.emit('add_play',play);                 
@@ -2529,6 +2684,7 @@ $scope.saveGame();
 
         }]).controller("GameEdit", ["$scope", "$http", "Game", "$routeParams","$filter", function ($scope, $http, Game, $routeParams,$filter) {
             Game.get($routeParams.game_id);
+            $scope.game={};
             $scope.teams = [
             {
                 team_name:'',
@@ -2547,11 +2703,34 @@ $scope.saveGame();
                 angular.forEach(player.period,function(period){
                     player.mins+=period.mins;
                 });
+
+            }
+            $scope.update_sc_pts = function(team){
+                $scope.game.boxscore[team].team.sc_pts = 0;
+                angular.forEach($scope.game.boxscore[team].team.period,function(period){
+                   $scope.game.boxscore[team].team.sc_pts += period.sc_pts;
+                });
+
+            }
+            $scope.update_fb_pts = function(team){
+                $scope.game.boxscore[team].team.fb_pts.pts = 0;
+                angular.forEach($scope.game.boxscore[team].team.period,function(period){
+                   $scope.game.boxscore[team].team.fb_pts.pts += period.fb_pts.pts;
+                });
+
+            }
+
+            $scope.update_fb_att = function(team){
+                $scope.game.boxscore[team].team.fb_pts.att = 0;
+                angular.forEach($scope.game.boxscore[team].team.period,function(period){
+                   $scope.game.boxscore[team].team.fb_pts.att += period.fb_pts.att;
+                });
+
             }
             $scope.remove_player = function (player,team) {
                 console.log($scope.game.boxscore[team].players)
                 $scope.game.boxscore[team].players.splice($scope.game.boxscore[team].players.indexOf(player), 1);
-                init_starters();
+                $scope.init_starters();
             }
             $scope.save = function(){
                 Game.save($scope.game);
@@ -2561,7 +2740,7 @@ $scope.saveGame();
             $scope.$on('responseHandler', function (event, resp) { 
                 if(resp.method=='game.get'){
                  $scope.game=resp.data;
-                init_starters();
+                $scope.init_starters();
                 for(i=1;i< $scope.game.period+1;i++){
                     if(i<5)
                         $scope.periods.push('Q'+i)
@@ -2573,7 +2752,7 @@ $scope.saveGame();
                     alert('Game Saved');
                 }
          });
-            var init_starters = function(){
+            $scope.init_starters = function(){
              $scope.teams[0].team_name =  $scope.game.teams[0].team_name;
              $scope.teams[1].team_name =  $scope.game.teams[1].team_name;     
              $scope.teams[0].starters = $filter('filter')( $scope.game.boxscore[0].players, {starter: true});

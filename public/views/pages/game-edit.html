@@ -1,27 +1,15 @@
 
 <div class="page page-table">
-    <button ng-click="save()">SAVE</button>
+    <button class="btn btn-success" ng-click="save()">SAVE</button>
     <section class="panel panel-default table-dynamic" ng-init="tid=$index" ng-repeat="team in teams">
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"> {{team.team_name}}</span> </strong></div>
-
-        <div class="table-filters">
-            <div class="row">
-
-               <div class="col-md-6 page-num-info">
-                    <span>
-                     
-                    </span>
-                </div>
-            </div>
-        </div>
-        <table class="table table-bordered table-striped table-responsive table-hover">
+ 
+          <table class="table table-bordered table-striped table-responsive table-hover">
             <thead>
-                <tr>
-                    <th>
-                        <div class="th">
-                            STARTERS 
-                        </div>
-                    </th>                    
+                <tr>  
+                    <th colspan=10 style="text-align:center">2ND CHANCE PTS</th>  
+                </tr>
+                <tr>                  
                     <th>
                         <div class="th">
                             TOTAL
@@ -31,14 +19,67 @@
                         <div class="th">
                             {{period}}
                         </div>
+                    </th> 
+                </tr>
+            </thead>
+            <tbody>
+                <td> {{game.boxscore[tid].team.sc_pts}}</td>
+                <td ng-repeat="period in game.boxscore[tid].team.period"><input type="number" ng-model="period.sc_pts" ng-change="update_sc_pts(tid)"></td>
+            </tbody>
+
+        </table>
+         <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>  
+                    <th colspan=10 style="text-align:center">FAST BREAK PTS</th>  
+                </tr>
+                <tr>                  
+                    <th>
+                        <div class="th">
+                            TOTAL
+                        </div>
+                    </th>                                               
+                    <th ng-repeat="period in periods">
+                        <div class="th">
+                            {{period}}
+                        </div>
+                    </th> 
+                </tr>
+            </thead>
+            <tbody>
+                <td> {{game.boxscore[tid].team.fb_pts.pts}}-PTS {{game.boxscore[tid].team.fb_pts.att}}-ATT </td>
+                <td ng-repeat="period in game.boxscore[tid].team.period">PTS: <input type="number" ng-model="period.fb_pts.pts" ng-change="update_fb_pts(tid)"> ATT: <input type="number" ng-model="period.fb_pts.att" ng-change="update_fb_att(tid)"></td>
+            </tbody>
+
+        </table>
+        <table class="table table-bordered table-striped table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th rowspan="2">
+                        <div class="th">
+                            STARTERS 
+                        </div>
                     </th>
-                    <th></th>     
+                    <th colspan=10 style="text-align:center">Minutes</th>  
+                </tr>
+                <tr>                  
+                    <th>
+                        <div class="th">
+                            TOTAL
+                        </div>
+                    </th>                                               
+                    <th ng-repeat="period in periods">
+                        <div class="th">
+                            {{period}}
+                        </div>
+                    </th> 
                 </tr>
             </thead>
             <tbody ng-repeat="player in team.starters">
-                <td>{{player.last_name}}, {{player.first_name}}</td>
-                <td>{{(player.mins/1000)/60}}</td>
-                <td ng-repeat="period in player.period" >{{(period.mins/1000)/60}}</td>
+                <td><input type="text" ng-model="player.last_name"> <input type="text" ng-model="player.first_name"> <button class="btn btn-facebook" ng-click="player.starter=!player.starter;init_starters()">{{player.starter?'MOVE TO BENCH':'MOVE TO STARTERS'}}</button> 
+                </td>  
+                <td>{{player.mins/60000}}</td>
+                <td ng-repeat="period in player.period" >{{period.mins/60000}}  <input type="number" ng-model="period.mins" ng-change="update_mins(player)"></td>
                 <td><button class="btn btn-danger" ng-show="!player.mins" ng-click="remove_player(player)">REMOVE FROM CURRENT LINEUP</button></td>
             </tbody>
 
@@ -54,7 +95,7 @@
                     </th>                    
                     <th>
                         <div class="th">
-                            MIN 
+                            TOTAL
                         </div>
                     </th>     
                      <th ng-repeat="period in periods">
@@ -66,15 +107,16 @@
                 </tr>
             </thead>
             <tbody ng-repeat="player in team.bench">
-                <td>{{player.last_name}}, {{player.first_name}}</td>
-                <td>{{(player.mins/1000)/60}}</td>
-                <td ng-repeat="period in player.period" >{{(period.mins/1000)/60}}</td>     
+                <td><input type="text" ng-model="player.last_name"> <input type="text" ng-model="player.first_name"> <button class="btn btn-{{player.starter?'info':'primary'}}" ng-click="player.starter=!player.starter;init_starters()">{{player.starter?'MOVE TO BENCH':'MOVE TO STARTERS'}}</button> 
+                </td>               
+                <td>{{player.mins/60000}}</td>
+                <td ng-repeat="period in player.period" >{{period.mins/60000}}  <input type="number" ng-model="period.mins" ng-change="update_mins(player)"></td>     
                 <td><button class="btn btn-danger" ng-show="!player.mins" ng-click="remove_player(player,tid)">REMOVE FROM CURRENT LINEUP</button></td>
             </tbody>
-
         </table>
 
     </section>
+     <button class="btn btn-success" ng-click="save()">SAVE</button>
 
 </div>
 

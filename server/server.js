@@ -71,6 +71,7 @@
     		game_time:String,
     		team_id:String,
     		team_name:String,
+    		player_id:String,
     		player_no:Number,
     		player_name:String,
     		desc:String,
@@ -570,6 +571,132 @@
 			if(game)
 			res.json(game);	
 		});
+	});
+
+	app.get('/api/stats/team/players/:team_id',function(req,res){
+		Game.aggregate([
+         
+{$unwind:"$boxscore"},
+{$match :{ "boxscore.team._id":req.params.team_id}},
+ {$unwind:"$boxscore.players"},
+ {$group:{
+  _id:"$boxscore.players._id",
+  first_name:{$first:"$boxscore.players.first_name"},
+  last_name:{$first:"$boxscore.players.last_name"},
+  gp:{$sum:{
+       $cond: { if: { $ne: [ "$boxscore.players.mins", 0 ] } ,
+                                              then: 1,
+                                              else: 0
+                                            } }
+  },
+
+   starts:{$sum:{
+       $cond: { if: { $eq: [ "$boxscore.players.starter", true ] } ,
+                                              then: 1,
+                                              else: 0
+                                            } }
+  },
+  mins:{$sum:"$boxscore.players.mins"},
+  mins_avg:{$avg:"$boxscore.players.mins"},
+  pts:{$sum:"$boxscore.players.pts"},
+  ast:{$sum:"$boxscore.players.ast"},
+  stl:{$sum:"$boxscore.players.stl"},
+  blk:{$sum:"$boxscore.players.blk"},
+  tov:{$sum:"$boxscore.players.tov.tot"},	
+  reb_off:{$sum:"$boxscore.players.reb.off"},
+  reb_def:{$sum:"$boxscore.players.reb.def"},
+  fou_off:{$sum:"$boxscore.players.fou.off"},
+  fou_tech:{$sum:"$boxscore.players.fou.def"},
+  fou_def:{$sum:"$boxscore.players.fou.tf"},
+  pts:{$sum:"$boxscore.players.pts"},
+  ppg:{$avg:"$boxscore.players.pts"},  
+  ftmd:{$sum:"$boxscore.players.ft.md"},
+  ft_att:{$sum:"$boxscore.players.ft.att"},  
+  ft_md:{$sum:"$boxscore.players.ft.md"},
+  fg_att:{$sum:"$boxscore.players.fg.att"},
+  fg_md:{$sum:"$boxscore.players.fg.md"},
+  fg2_att:{$sum:"$boxscore.players.fg2.att"},
+  fg2_md:{$sum:"$boxscore.players.fg2.md"},
+  fg3_att:{$sum:"$boxscore.players.fg3.att"},
+  fg3_md:{$sum:"$boxscore.players.fg3.md"},
+  fg_cont_att:{$sum:"$boxscore.players.fg.contested.att"},
+  fg_cont_md:{$sum:"$boxscore.players.fg.contested.md"},
+  hi_pts:{$max:"$boxscore.players.pts"},
+  low_pts:{$min:"$boxscore.players.pts"}
+  }
+  },
+  {$sort:{ppg:-1}}
+
+    ], function (err, stats) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if(stats)
+			res.json(stats);	
+    });
+	});
+
+	app.get('/api/stats/player',function(req,res){
+		Game.aggregate([
+         
+{$unwind:"$boxscore"},
+ {$unwind:"$boxscore.players"},
+ {$group:{
+  _id:"$boxscore.players._id",
+  first_name:{$first:"$boxscore.players.first_name"},
+  last_name:{$first:"$boxscore.players.last_name"},
+  gp:{$sum:{
+       $cond: { if: { $ne: [ "$boxscore.players.mins", 0 ] } ,
+                                              then: 1,
+                                              else: 0
+                                            } }
+  },
+   starts:{$sum:{
+       $cond: { if: { $eq: [ "$boxscore.players.starter", true ] } ,
+                                              then: 1,
+                                              else: 0
+                                            } }
+  },
+  mins:{$sum:"$boxscore.players.mins"},
+  mins_avg:{$avg:"$boxscore.players.mins"},
+  pts:{$sum:"$boxscore.players.pts"},
+  ast:{$sum:"$boxscore.players.ast"},
+  stl:{$sum:"$boxscore.players.stl"},
+  blk:{$sum:"$boxscore.players.blk"},
+  tov:{$sum:"$boxscore.players.tov.tot"},
+  reb_off:{$sum:"$boxscore.players.reb.off"},
+  reb_def:{$sum:"$boxscore.players.reb.def"},
+  fou_off:{$sum:"$boxscore.players.fou.off"},
+  fou_tech:{$sum:"$boxscore.players.fou.def"},
+  fou_def:{$sum:"$boxscore.players.fou.tf"},
+  pts:{$sum:"$boxscore.players.pts"},
+  ppg:{$avg:"$boxscore.players.pts"},  
+  ftmd:{$sum:"$boxscore.players.ft.md"},
+  ft_att:{$sum:"$boxscore.players.ft.att"},  
+  ft_md:{$sum:"$boxscore.players.ft.md"},
+  fg_att:{$sum:"$boxscore.players.fg.att"},
+  fg_md:{$sum:"$boxscore.players.fg.md"},
+  fg2_att:{$sum:"$boxscore.players.fg2.att"},
+  fg2_md:{$sum:"$boxscore.players.fg2.md"},
+  fg3_att:{$sum:"$boxscore.players.fg3.att"},
+  fg3_md:{$sum:"$boxscore.players.fg3.md"},
+  fg_cont_att:{$sum:"$boxscore.players.fg.contested.att"},
+  fg_cont_md:{$sum:"$boxscore.players.fg.contested.md"},
+  hi_pts:{$max:"$boxscore.players.pts"},
+  low_pts:{$min:"$boxscore.players.pts"}
+  }
+  },
+  {$sort:{ppg:-1}}
+
+    ], function (err, stats) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if(stats)
+			res.json(stats);	
+    });
 	});
 
 
