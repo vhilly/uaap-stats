@@ -1427,6 +1427,13 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.off -= 1;
                     $scope.game.boxscore[play.op.team_index].team.fou.off -= 1;
                     $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.off -= 1;
+
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.tot -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.tot -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.off_foul -= 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.off_foul -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.tov -= 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].tov -= 1;
                 } else {
                     if (play.op.is_tech) {
                         $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tf -= 1;
@@ -1665,6 +1672,14 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.off += 1;
                     $scope.game.boxscore[play.op.team_index].team.fou.off += 1;
                     $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].fou.off += 1;
+
+
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.tot += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.tot += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].tov.off_foul += 1;
+                    $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].tov.off_foul += 1;
+                    $scope.game.boxscore[play.op.team_index].team.tov += 1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].tov += 1;
                 } else {
                     if (play.op.is_tech) {
                         $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.tf += 1;
