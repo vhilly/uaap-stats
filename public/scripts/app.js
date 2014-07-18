@@ -1310,6 +1310,7 @@ $scope.saveGame();
 
         //shot attempt action
         $scope.shot_attempt = function (value, zone, is_in_paint) {
+	    shotZone=zone;
             if (!game_ready())
                return
            if (!$scope.current_action == 'shot_attempt') 
