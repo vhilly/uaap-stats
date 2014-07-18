@@ -1477,6 +1477,7 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].pts -= 1;
                     $scope.game.teams[play.op.team_index].score -= 1;
                     $scope.game.boxscore[play.op.team_index].team.period[play.period-1].pts -=1;
+                    $scope.game.boxscore[play.op.team_index].team.pts -=1;
 
 
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].ft.md -= 1;
@@ -1497,6 +1498,7 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].pts -= play.op.value;
                     $scope.game.teams[play.op.team_index].score -= play.op.value;
                     $scope.game.boxscore[play.op.team_index].team.period[play.period-1].pts -=play.op.value;
+                    $scope.game.boxscore[play.op.team_index].team.pts -=play.op.value;
 
                 }
                 if(play.op.value==2){
@@ -1711,7 +1713,8 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].pts +=1;
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].pts += 1;
                     $scope.game.teams[play.op.team_index].score += 1;
-                    $scope.game.boxscore[play.op.team_index].team.period[play.period-1].pts +=1;
+                    $scope.game.boxscore[play.op.team_index].team.period[play.period-1].pts +=1;                    
+                    $scope.game.boxscore[play.op.team_index].team.pts +=1;
 
 
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].ft.md += 1;
@@ -1732,6 +1735,7 @@ $scope.saveGame();
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period-1].pts += play.op.value;
                     $scope.game.teams[play.op.team_index].score += play.op.value;
                     $scope.game.boxscore[play.op.team_index].team.period[play.period-1].pts +=play.op.value;
+                    $scope.game.boxscore[play.op.team_index].team.pts +=play.op.value;
 
                 }
                 if(play.op.value==2){

@@ -599,7 +599,7 @@
   mins:{$sum:"$boxscore.players.mins"},
   mins_avg:{$avg:"$boxscore.players.mins"},
   pts:{$sum:"$boxscore.players.pts"},
-  ast:{$sum:"$boxscore.players.ast"},
+  ast:{$sum:"$boxscore.players.ass"},
   stl:{$sum:"$boxscore.players.stl"},
   blk:{$sum:"$boxscore.players.blk"},
   tov:{$sum:"$boxscore.players.tov.tot"},	
@@ -637,6 +637,54 @@
     });
 	});
 
+
+	app.get('/api/stats/team',function(req,res){
+		Game.aggregate([
+
+{$unwind:"$boxscore"},{ $project : { "boxscore.team" : 1 ,  }},
+{$group:{
+  _id:"$boxscore.team._id",    
+  team_name:{$first:"$boxscore.team.team_name"},
+  gp:{$sum:1},
+  ast:{$sum:"$boxscore.team.ass"},
+  stl:{$sum:"$boxscore.team.stl"},
+  blk:{$sum:"$boxscore.team.blk"},
+  tov:{$sum:"$boxscore.team.tov"},
+  reb_off:{$sum:"$boxscore.team.reb.off"},
+  reb_def:{$sum:"$boxscore.team.reb.def"},
+  fou_off:{$sum:"$boxscore.team.fou.off"},
+  fou_tech:{$sum:"$boxscore.team.fou.def"},
+  fou_def:{$sum:"$boxscore.team.fou.tf"},
+  pts:{$sum:"$boxscore.team.pts"},
+  ppg:{$avg:"$boxscore.team.pts"},  
+  ftmd:{$sum:"$boxscore.team.ft.md"},
+  ft_att:{$sum:"$boxscore.team.ft.att"},  
+  ft_md:{$sum:"$boxscore.team.ft.md"},
+  fg_att:{$sum:"$boxscore.team.fg.att"},
+  fg_md:{$sum:"$boxscore.team.fg.md"},
+  fg2_att:{$sum:"$boxscore.team.fg2.att"},
+  fg2_md:{$sum:"$boxscore.team.fg2.md"},
+  fg3_att:{$sum:"$boxscore.team.fg3.att"},
+  fg3_md:{$sum:"$boxscore.team.fg3.md"},
+  fg_cont_att:{$sum:"$boxscore.team.fg.contested.att"},
+  fg_cont_md:{$sum:"$boxscore.team.fg.contested.md"},
+  fb_att:{$sum:"$boxscore.team.fb_pts.att"},
+  fb_pts:{$sum:"$boxscore.team.fb_pts.pts"},
+  hi_pts:{$max:"$boxscore.team.pts"},
+  low_pts:{$min:"$boxscore.team.pts"}
+}}
+
+    ], function (err, stats) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if(stats)
+			res.json(stats);	
+    });
+	});
+
+
 	app.get('/api/stats/player',function(req,res){
 		Game.aggregate([
          
@@ -661,7 +709,7 @@
   mins:{$sum:"$boxscore.players.mins"},
   mins_avg:{$avg:"$boxscore.players.mins"},
   pts:{$sum:"$boxscore.players.pts"},
-  ast:{$sum:"$boxscore.players.ast"},
+  ast:{$sum:"$boxscore.players.ass"},
   stl:{$sum:"$boxscore.players.stl"},
   blk:{$sum:"$boxscore.players.blk"},
   tov:{$sum:"$boxscore.players.tov.tot"},
