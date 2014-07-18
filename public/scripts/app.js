@@ -1423,6 +1423,7 @@ $scope.saveGame();
                 $scope.game.boxscore[play.op.team_index].team.period[play.period - 1].reb.tot -= 1;
                 break;
                 case 'foul':
+                alert(play.op.is_offensive)
                 if (play.op.is_offensive) {
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].fou.off -= 1;
                     $scope.game.boxscore[play.op.team_index].players[play.op.player_index].period[play.period - 1].fou.off -= 1;
@@ -2550,6 +2551,7 @@ $scope.saveGame();
                         tf: $scope.selected_player.fou.tf,
                         wa: withAward,
                         is_tech: is_tech,
+                        is_offensive:isOffensive
                     }
                 };
             } else {
