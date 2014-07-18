@@ -759,8 +759,7 @@ function () {
         });
 
     }]).controller("PointPanelCtrl", ["$scope", "$http", "socket", "Game", "$interval", "PlayByPlay", "$filter", function ($scope, $http, socket, Game, $interval, PlayByPlay, $filter) {
-        var sectorX = '',
-        sectorY, play = '',
+        var play = '',
         result = '',
         fb_pts = 0,
         ft_made = false,
@@ -778,7 +777,8 @@ function () {
         $scope.players_on_court = [];
         $scope.selected_play = {};
         $scope.updated_play = {};
-
+	$scope.sectorX=0;
+	$scope.sectorY=0;
 
         var abs_plays = {
             game: {
@@ -2334,7 +2334,10 @@ $scope.saveGame();
                     att: $scope.selected_player.fg.att,
                     md: $scope.selected_player.fg.md,
                     is_blocked: $scope.field_goal.blocked,
-                    is_contested: $scope.field_goal.contested
+                    is_contested: $scope.field_goal.contested,
+		    shotZone:shotZone,
+                    shotType:$scope.field_goal.shot_type.name
+
                 }
             };
             $scope.field_goal = {};
@@ -2345,8 +2348,14 @@ $scope.saveGame();
 
 
         $scope.setShotLocation = function (e) {
-            sectorX = (e.pageX - e.currentTarget.offsetLeft);
-            sectorY = (e.pageY - e.currentTarget.offsetTop);
+            //sectorX = (e.pageX - e.currentTarget.offsetLeft);
+            //sectorY = (e.pageY - e.currentTarget.offsetTop);
+	    console.log(e);
+	alert($scope.sectorX);
+	    //sectorX = e.offsetX?(e.offsetX)-4: parseInt(e.pageX-e.currentTarget.offsetLeft);
+            //sectorY = e.offsetY?(e.offsetY)-4: parseInt(e.pageY-e.currentTarget.offsetTop)-151;;
+            //alert('Angular x='+(e.currentTarget.offsetLeft)+' y='+(e.currentTarget.offsetTop));
+
         };
 
         function save_play(action) {

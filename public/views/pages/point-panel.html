@@ -331,8 +331,11 @@
 
 						</dl>	<span ng-show="current_action">. SELECT PLAYER/TEAM FOR {{current_action?current_action:''}} {{field_goal.value?'('+field_goal.value+'pts)':''}} </span>&nbsp;
 				
-						<div class="court" style="margin:auto;width:678px;margin-top:10px">
-							<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="678.62207" height="371.02435" id="svg3058" version="1.1" inkscape:version="0.48.4 r9939" sodipodi:docname="drawing.svg" ng-click="setShotLocation($event)">
+						<div class="courts" style="margin:auto;width:678px;margin-top:10px">
+
+     <img id="ball" style="position:relative;visibility:hidden" src="images/ball_16.png">
+
+							<svg id="pointer_div" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="678.62207" height="371.02435" id="svg3058" version="1.1" inkscape:version="0.48.4 r9939" sodipodi:docname="drawing.svg" ng-click="setShotLocation($event)">
 								<defs id="defs3060">
 									<clipPath clipPathUnits="userSpaceOnUse" id="clipPath4673"></clipPath>
 								</defs>
@@ -475,5 +478,63 @@
 					</div>
 				</div>
 			</section>
+	<input id='secX' type='text' name='secX' ng-model="sectorX"></input>
+	<input id='secY' type='text' name='secY' ng-model="sectorY"></input>
 		</div>
 	</div>
+
+<script>
+
+
+$('#pointer_div').on('click', function(evt){
+    var event = (!evt) ? window.event : evt;
+    pos_x = event.offsetX?(event.offsetX)-4: parseInt(event.pageX-$(this).offset().left);//document.getElementById("pointer_div").offsetLeft;
+    pos_y = event.offsetY?(event.offsetY)-4: parseInt(event.pageY-$(this).offset().top)-151;//document.getElementById("pointer_div").offsetTop;
+    $('#secX').val(pos_x);
+    $('#secX').trigger('input');
+    $('#secY').val(pos_y);
+    $('#secY').trigger('input');
+
+    $('#ball').attr('style','position:relative;visibility:visible;left:'+(pos_x-335)+'px;top:'+(pos_y+13)+'px');
+    //console.log(event);
+    alert("JavaScript:x="+($(this).offset().left)+" | y="+($(this).offset().top));
+});
+
+
+$(".court").click(function(e){ 
+ var scrOfX = 0, scrOfY = 0;
+  if( typeof( window.pageYOffset ) == 'number' ) {
+    //Netscape compliant
+    scrOfY = window.pageYOffset;
+    scrOfX = window.pageXOffset;
+        //alert('if');
+  } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+    //DOM compliant
+    scrOfY = document.body.scrollTop;
+    scrOfX = document.body.scrollLeft;
+        //alert('else1');
+  } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+    //IE6 standards compliant mode
+    scrOfY = document.documentElement.scrollTop;
+    scrOfX = document.documentElement.scrollLeft;
+        //alert('else2');
+  }
+//alert(document.htmlElement.scrollTop);
+
+
+          var parentOffsetY = $('.panel-box').offset().top+$('#point_panel').offset().top+this.offsetTop+5+$(window).scrollTop();
+          var parentOffsetX = $('#point_panel').offset().left+this.offsetLeft+5+$(window).scrollLeft();
+          var relativeXPosition = (e.pageX-parentOffsetX); //offset -> method allows you to retrieve the current position of an element 'relative' to the document
+          var relativeYPosition = (e.pageY-parentOffsetY); //offset -> method allows you to retrieve the current position of an element 'relative' to the document
+          //alert('X:'+relativeXPosition+' Y:'+relativeYPosition);
+          $('#ball').attr('style','position:relative;left:'+(relativeXPosition-330)+'px;top:'+relativeYPosition+'px');
+
+    /*
+                $('#FIELDGOAL_sectorX').val(relativeXPosition);
+                $('#FIELDGOAL_sectorY').val(relativeYPosition);
+    $("#header").html("<p><strong>X-Position: </strong>"+relativeXPosition+" | <strong>Y-Position: </strong>"+relativeYPosition+"</p>")*/
+  });
+</script>
+            
+
+
