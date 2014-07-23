@@ -9,18 +9,29 @@
 	border:1px solid #555;
 }
 </style>
-<div class="page bg-facebook" data-ng-controller="PointPanelCtrl">
+<!--<body ng-keyup="onKeyUp($event)" data-ng-controller="PointPanelCtrl">-->
+<div class="page bg-facebook" data-ng-controller="PointPanelCtrl" tabindex="1"    ng-keyup="onKeyUp($event)">
+
+<div class="page bg-facebook" tabindex="1"    ng-keyup="onKeyUp($event)">
+
 	<div class="row">
 		<div class="col-md-12">
 			<section class="panel panel-box">
 				<!-- timer and scores -->
 				<div class="panel-top bg-primary">
 					<div class="pull-{{sideA?'right':'left'}}">
-						<p>{{game.teams[0].score}}</p>
-						<p>{{game.teams[0].team_name}}</p>
+						<p class="h3">{{game.teams[0].score}}</p>
+						<!--
+						<p class="h3">{{game.teams[0].score}}  {{game.boxscore[0].team.big_lead}}</p>
+						-->
+						<p >{{game.teams[0].team_name}}</p>
 					</div>
 					<div class="pull-{{sideA?'left':'right'}}">
-						<p>{{game.teams[1].score}}</p>
+
+						<p class="h3">{{game.teams[1].score}}</p>
+						<!--
+						<p class="h3">{{game.teams[1].score}}  {{game.boxscore[1].team.big_lead}}</p>
+						-->
 						<p>{{game.teams[1].team_name}}</p>
 					</div>
 					<div class="divider divider-lg"></div>
@@ -37,7 +48,7 @@
 						<div>
 							<button class="btn btn-block btn-warning" ng-click="team_select(0)" ng-disabled="!btn.team_select.light.enabled">{{game.teams[0].team_name}}</button><br>
 						</div>
-						<div ng-repeat="player in players_on_court[0]">
+						<div ng-repeat="player in players_on_court[0]  |orderBy:'no':false">
 							<button class="btn btn-block {{selected_player._id==player._id?'btn-success':'btn-primary'}}" ng-click="player_select(0,player)" ng-disabled="!btn.player_select.light.enabled">{{player.no}} {{player.last_name}}</button>
 							<br>
 						</div>
@@ -48,7 +59,7 @@
 									<th>NAME</th>
 									<th>IN/OUT</th>
 								</tr>
-								<tr class="" ng-repeat="player in game.boxscore[0].players|orderBy:'oncourt':true">
+								<tr class="" ng-repeat="player in game.boxscore[0].players|orderBy:['oncourt','no']:true">
 									<td ng-click="get_player_box(0,player)">{{player.no}}</td>
 									<td>{{player.last_name +' '+player.first_name}}</td>
 									<td>
@@ -150,7 +161,7 @@
 							<button class="btn btn-block btn-warning" ng-click="team_select(1)" ng-disabled="!btn.team_select.dark.enabled">{{game.teams[1].team_name}}</button><br>
 						</div>
 					
-						<div ng-repeat="player in players_on_court[1]">
+						<div ng-repeat="player in players_on_court[1] |orderBy:'no':false">
 							<button class="btn btn-block  {{selected_player._id==player._id?'btn-success':'btn-primary'}}" ng-click="player_select(1,player)" ng-disabled="!btn.player_select.dark.enabled">{{player.no}} {{player.last_name}}</button>
 							<br>
 						</div>
@@ -161,7 +172,7 @@
 									<th>NAME</th>
 									<th>IN/OUT</th>
 								</tr>
-								<tr class="" ng-repeat="player in game.boxscore[1].players|orderBy:'oncourt':true">
+								<tr class="" ng-repeat="player in game.boxscore[1].players|orderBy:['oncourt','no']:true">
 									<td ng-click="get_player_box(1,player)">{{player.no}}</td>
 									<td>{{player.last_name +' '+player.first_name}}</td>
 									<td>
@@ -289,8 +300,8 @@
 							<button class="btn btn-danger " ng-click="team_rebound(false)">TEAM DREB</button>
 							<button class="btn btn-danger " ng-click="foul()">FOUL</button>
 							<button class="btn btn-danger " ng-click="foul_on()">FOUL ON</button>
-							<button class="btn btn-danger " type="button" ng-click="free_throw(true)" ng-disabled=" ">FT-Made</button>
-							<button class="btn btn-danger " type="button" ng-click="free_throw(false)" ng-disabled=" ">FT-Missed</button>							
+							<button class="btn btn-danger " type="button" ng-click="free_throw(1)" ng-disabled=" ">FT-Made</button>
+							<button class="btn btn-danger " type="button" ng-click="free_throw(0)" ng-disabled=" ">FT-Missed</button>							
 							<button class="btn btn-info " type="button" ng-click="showSettings=!showSettings">Settings</button>
 						</dl>
 						<dl class="dl-horizontal" ng-show="btn.foul_type.enabled">
@@ -301,12 +312,12 @@
 							<button class="btn span6 " type="button" ng-click="saveFoul(false,false,true)" ng-disabled="!btn.foul_type.enabled">Tech/Unsportsman W/O</button>
 						</dl>	
 						<dl class="dl-horizontal" ng-show="field_goal.shot_type">
-							<button class="btn btn-danger " type="button" ng-click="save_field_goal(true,true,false)" ng-disabled="!field_goal.shot_type">Made Contested</button>
-							<button class="btn btn-danger " type="button" ng-click="save_field_goal(true,false,false)" ng-disabled="!field_goal.shot_type">Made Un-contested</button>
+							<button class="btn btn-danger " type="button" ng-click="save_field_goal(1,true,false)" ng-disabled="!field_goal.shot_type">Made Contested</button>
+							<button class="btn btn-danger " type="button" ng-click="save_field_goal(1,false,false)" ng-disabled="!field_goal.shot_type">Made Un-contested</button>
 							<button class="btn btn-{{field_goal.from_assist?'primary':'inverse'}} " type="button" ng-click="field_goal.from_assist =!field_goal.from_assist" ng-disabled="!field_goal.shot_type">w/ Assist</button>
-							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,true,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Contested</button>
-							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,true,true)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Blocked</button>
-							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(false,false,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Un-contested</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(0,true,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Contested</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(0,true,true)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Blocked</button>
+							<button class="btn btn-danger  " type="button" ng-click="save_field_goal(0,false,false)" ng-disabled="!field_goal.shot_type || field_goal.from_assist">Missed Un-contested</button>
 						</dl>
 						<dl class="dl-horizontal">
 							<div ng-show="current_action != 'turn_over'">	
@@ -316,6 +327,8 @@
 							</span>
 							<button class="btn" ng-click="adjustClock(5)">+1sec</button>
 							<button class="btn" ng-click="adjustClock(-5)">-1sec</button>
+							<button class="btn btn-danger " type="button" ng-click="dead_lock()">DEADLOCK</button>
+							<button class="btn btn-danger " type="button" ng-click="lead_change()">LEAD CHANGE</button>
 							</div>
 							<div ng-show="current_action == 'turn_over'">
 							<button class="btn btn-danger  " type="button" ng-click="save_turn_over('travelling')" ng-disabled="!btn.to_type.enabled">Travelling</button>
@@ -335,7 +348,7 @@
 
      <img id="ball" style="position:relative;visibility:hidden" src="images/ball_16.png">
 
-							<svg id="pointer_div" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="678.62207" height="371.02435" id="svg3058" version="1.1" inkscape:version="0.48.4 r9939" sodipodi:docname="drawing.svg" ng-click="setShotLocation($event)">
+							<svg id="pointer_div" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="678.62207" height="371.02435" id="svg3058" version="1.1" inkscape:version="0.48.4 r9939" sodipodi:docname="drawing.svg" >
 								<defs id="defs3060">
 									<clipPath clipPathUnits="userSpaceOnUse" id="clipPath4673"></clipPath>
 								</defs>
@@ -428,15 +441,15 @@
 								</g>
 							</svg>
 						</div>
-						<section class="panel panel-default">
-							<div class="panel-heading "><strong><span class="glyphicon glyphicon-th"></span>Play By Play</strong></div>
-							<div class="panel-body">
-								{{selected_play}}
-								<select ng-model="updated_play.op.team_index"><option value=0>{{game.teams[0].team_name}}</option><option value=1>{{game.teams[1].team_name}}</option></select>
-								<select ng-options="game.boxscore[updated_play.op.team_index].players.indexOf(player) as  player.last_name for player in game.boxscore[updated_play.op.team_index].players" ng-model="updated_play.op.player_index"></select> 
-								<input type="text" ng-model="updated_play.period">
-								<input type="text" ng-model="updated_play.game_time"><br>
-								<button ng-click="save_play()">Save</button>
+						<section class="panel panel-default">							 
+							<div class="panel-body" ng-show="updated_play">								
+								Team:<select ng-model="updated_play.op.team_index"><option value=0>{{game.teams[0].team_name}}</option><option value=1>{{game.teams[1].team_name}}</option></select>
+								Player:<select ng-options="game.boxscore[updated_play.op.team_index].players.indexOf(player) as  player.no+' '+player.last_name for player in game.boxscore[updated_play.op.team_index].players" ng-model="updated_play.op.player_index"></select> 
+								Period: <input type="number" ng-model="updated_play.period">
+								Game Time:<input type="text" ng-model="updated_play.game_time">
+								<select ng-model="updated_play.op.value" ng-if="updated_play.game_event=='field_goal'"><option value=2>2-PTS</option><option value=3>3-PTS</option></select>
+								<select ng-model="updated_play.op.made"><option value=1>Made</option><option value=0>Missed</option></select>
+								<button ng-click="save_play()">Save</button><button ng-click="updated_play=''">Cancel</button>
 							</div>
 						</section>
 
@@ -482,7 +495,7 @@
 	<input id='secY' type='text' name='secY' ng-model="sectorY"></input>
 		</div>
 	</div>
-
+</body>
 <script>
 
 
@@ -497,7 +510,7 @@ $('#pointer_div').on('click', function(evt){
 
     $('#ball').attr('style','position:relative;visibility:visible;left:'+(pos_x-335)+'px;top:'+(pos_y+13)+'px');
     //console.log(event);
-    alert("JavaScript:x="+($(this).offset().left)+" | y="+($(this).offset().top));
+   // alert("JavaScript:x="+($(this).offset().left)+" | y="+($(this).offset().top));
 });
 
 
